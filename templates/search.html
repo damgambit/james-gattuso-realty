@@ -1,0 +1,471 @@
+{% load static %}
+{% load widget_tweaks %}
+{% load mathfilters %}
+<!doctype html>
+<html>
+<head>
+  <link href="{% static "css/tablenew_zuna.css" %}" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body style="margin-top: 2%;color:#000000b3;">
+  <!-- <div class="container"> -->
+  {% if messages %}
+  {% for msg in messages %}
+  {% if msg.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+  <div class="alert alert-danger" role="alert" id="success-alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>Warning!</strong> {{ msg }}
+  </div>
+  {% else %}
+  <div class="alert alert-success" role="alert" id="success-alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>Success!</strong> {{ msg }}
+  </div>
+  {% endif %}
+  {% endfor %}
+  {% endif %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel">
+        <div class="row" style="background-color: #2da2c8;width: 100%;margin-right: 0px;margin-left: 0px;padding-top: 14px;">
+          <div class="col-md-2">
+            <h1 class="panel-title" style="color:white;font-size: x-large;">James Realty</h1>
+          </div>
+
+          <div class="col-md-2 from-to">
+            <div class="from-inner-addon">
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <input type="text" placeholder="From" id="from" />
+            </div>
+            <div class="to-inner-addon">
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <input type="text" placeholder="To" id="to" style="margin-top: 2%;margin-bottom: 6%;" />
+            </div>
+          </div>
+          <div class="col-md-2">
+            <form method="post" > {% csrf_token %}
+              <div class="right-inner-addon">
+                {% render_field form_search.search_data placeholder="Search" style="border-radius: 20px;" %}
+              </div>
+              <button class="btn" type="submit" style="padding-left: 20px;padding-bottom:22px;width: 90px; height: 30px; background-color:#0b0b0b; color: white"><i class="fa fa-search" aria-hidden="true"></i> </button>
+            </form>
+
+          </div>
+          <div class="col-md-3 check" style="color:white;">
+            Show auction that are:<br>
+            <input type="checkbox" value="Active all" id="activex"> Active all
+            <input type="checkbox" value="Postponed" id="postponedx"> Postponed
+            <input type="checkbox" value="Cancelled" id="cancelx"> Cancelled
+
+
+          </div>
+          <div class="block">
+            <div class="col-md-1">
+              <a href="{% url 'property' %}" style="color: white; text-decoration: none"><button class="btn btn-circle btn-primary">Display All</button></a>
+            </div>
+            <div class="col-md-1">
+              <a href="http://zunaventures.herokuapp.com/export_all/All" class="btn_cust">Export Excel</a>
+            </div>
+          </div><br>
+        </div>
+        <div id="table_ajax"></div>
+        <div id="table_python">
+          <table class="table table-hover" id="dev-table">
+            <thead style="background-color: darkblue;color: white;">
+              <tr>
+                <th>Auction Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Address (click address below to view Map)</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip Code</th>
+                <th>Country</th>
+                <th>Page/Liber</th>
+                <th>Deposit</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="t_tr">
+              {% for each_property in page.object_list  %}
+              <tr id="python_body">
+                <td data-toggle="modal" data-target="#{{ each_property.id}}_{{ each_property.id|add:page.number }}" style="cursor: pointer;">{{ each_property.date }}</td>
+                <td data-toggle="modal" data-target="#{{ each_property.id }}_{{ each_property.id|add:page.number }}" style="cursor: pointer;">{{ each_property.time }}</td>
+                <td data-toggle="modal" data-target="#{{ each_property.id }}_{{ each_property.id|add:page.number }}" style="cursor: pointer;">{{ each_property.status }}</td>
+                <td data-toggle="modal" data-target="#{{ each_property.id }}_{{ each_property.id|add:page.number }}" style="cursor: pointer;">{{ each_property.address }}</td>
+                <td data-toggle="modal" data-target="#{{ each_property.id }}_{{ each_property.id|add:page.number }}" style="cursor: pointer;">{{ each_property.city }}</td>
+                <td data-toggle="modal" data-target="#{{ each_property.id }}_{{ each_property.id|add:page.number }}" style="cursor: pointer;">{{ each_property.state }}</td>
+                <td data-toggle="modal" data-target="#{{ each_property.id }}_{{ each_property.id|add:page.number }}" style="cursor: pointer;">{{ each_property.zipcode }}</td>
+                <td data-toggle="modal" data-target="#{{ each_property.id }}_{{ each_property.id|add:page.number }}" style="cursor: pointer;">{{ each_property.country }}</td>
+                <td data-toggle="modal" data-target="#{{ each_property.id }}_{{ each_property.id|add:page.number }}" style="cursor: pointer;"></td>
+                <td data-toggle="modal" data-target="#{{ each_property.id }}_{{ each_property.id|add:page.number }}" style="cursor: pointer;">{{ each_property.deposit }}</td>
+                <td data-toggle="modal" data-target="#{{ each_property.id }}_{{ each_property }}_Modal" style="cursor: pointer;"><i class="fa fa-sticky-note-o" aria-hidden="true"></i></td>
+              </tr>
+
+
+
+              <div class="modal fade" id="{{ each_property.id }}_{{ each_property }}_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Add Notes</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -22px;">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form method="post"> {% csrf_token %}
+                        {% render_field forms.id value=each_property.id %}
+                        {% render_field forms.cname value=each_property %}
+                        <div class="form-group">
+                          <label for="message-text" class="form-control-label">Message: {{ each_property.message }}</label>
+                          {% if each_property.message_avail %}
+                          {{ each_property.message }}
+
+                          {% else %}
+                          {% render_field forms.text id="message-text" class="form-control" %}
+                          {#                    {% render_field forms.text id="message-text" value=each_property.message %}#}
+                          {% endif %}
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary" id="submitbut">Save</button>
+                        </div>
+                      </form>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-12" id="page_show">
+      <div class="col-md-10 col-md-offset-1 col-xs-12">
+        <nav id="nav-below" class="site-navigation paging-navigation navbar">
+          {% if not page.has_previous %}
+          <div class="nav-previous" disabled></div>
+          {% else %}
+          <div class="nav-previous"><a href="?page={{ page.previous_page_number }}" class="btn btn-primary">PREV PAGE</a></div>
+          {% endif %}
+          <ul class="pagination pagination-lg">
+            {% if page.has_previous %}
+            <li><a href="?page={{ page.previous_page_number }}">{{ page.previous_page_number }}</a></li>
+            {% endif %}
+            <li><a class="active" href="?page={{ page.number }}" style="background-color: #00c109">{{ page.number }}</a></li>
+            {% if page.has_next %}
+            <li><a href="?page={{ page.next_page_number }}">{{ page.next_page_number }}</a></li>
+            {% if page.next_page_number != num_page %}
+            {% if page.next_page_number|add:1 != num_page %}
+            <li><a href="?page={{ num_page|sub:1 }}">...</a></li>
+            {% endif %}
+            <li><a href="?page={{ num_page }}">{{ num_page }}</a></li>
+            {% endif %}
+            {% endif %}
+          </ul>
+          {% if not page.has_next %}
+          <div class="nav-next" disabled></div>
+          {% else %}
+          <div class="nav-next"><a href="?page={{ page.next_page_number }}" class="btn btn-primary">NEXT PAGE</a></div>
+          {% endif %}
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <hr style="border-top: 2px solid #2da2c8;width: 100%;">
+  <footer>
+    <div class="row" style="padding:18px;">
+      <div class="col-md-10">
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+      </div>
+      <div class="col-md-2">
+        <h1 style="color:#2da2c8;">James Realty</h1>
+      </div>
+    </div>
+  </footer>
+  <!-- </div> -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <!-- <link rel="stylesheet" href="/resources/demos/style.css"> -->
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script type="text/javascript" src="{% static "js/bootstrap.js" %}"></script>
+
+  <script type="text/javascript">
+  jQuery(document).ready(function($) {
+
+    $('#myCarousel').carousel({
+      interval: 5000
+    });
+
+    $('#carousel-text').html($('#slide-content-0').html());
+
+    //Handles the carousel thumbnails
+    $('[id^=carousel-selector-]').click( function(){
+      var id = this.id.substr(this.id.lastIndexOf("-") + 1);
+      var id = parseInt(id);
+      $('#myCarousel').carousel(id);
+    });
+
+
+    // When the carousel slides, auto update the text
+    $('#myCarousel').on('slid.bs.carousel', function (e) {
+      var id = $('.item.active').data('slide-number');
+      $('#carousel-text').html($('#slide-content-'+id).html());
+    });
+  });
+  </script>
+
+  <script type="text/javascript">
+
+  $( function() {
+    $( "#from" ).datepicker({onSelect: function(date){
+      $.ajax({
+        type: 'GET',
+        url: "{% url 'datepicker_from' %}",
+        data: { date_val: date },
+        dataType: 'json',
+        success: function (data) {
+          var dat = JSON.parse(data.obj);
+          console.log(dat.length);
+          txt = '';
+          demo = '';
+          for(var j = 1; j < dat.length; j++) {
+            console.log(dat[j-1]);
+            fil = JSON.parse(dat[j-1]);
+            for (var i = 0; i < fil.length - 1 ; i++) {
+              console.log(fil.length);
+              demo += "<td>" + fil[i]["date"] + "</td>";
+              demo += "<td>" + fil[i]["time"] + "</td>";
+              demo += "<td>" + fil[i]["status"] + "</td>";
+              demo += "<td>" + fil[i]["address"] + "</td>";
+              demo += "<td>" + fil[i]["city"] + "</td>";
+              demo += "<td>" + fil[i]["state"] + "</td>";
+              demo += "<td>" + fil[i]["zipcode"] + "</td>";
+              demo += "<td>" + fil[i]["country"] + "</td>";
+              demo += "<td>" + fil[i]["deposit"] + "</td>";
+              if(j === 2){
+                demo += '<td data-toggle="modal" data-target="#'+ dat[i]['id'].toString()+'_'+'TownAuction'+'_Modal" style="cursor: pointer;"><i class="fa fa-sticky-note-o" aria-hidden="true"></i></td>';
+              }
+              else {
+                demo += '<td data-toggle="modal" data-target="#'+ dat[i]['id'].toString()+'_'+ 'BayStateAuction' +'_Modal" style="cursor: pointer;"><i class="fa fa-sticky-note-o" aria-hidden="true"></i></td>';
+              }                      txt += demo;
+            }
+          }
+          document.getElementById('t_tr').innerHTML = txt;
+          $('#t_tr').show();
+        }
+      });
+    }});
+  } );
+  $( function() {
+    $( "#to" ).datepicker({onSelect: function(date){
+      $('#python_body').hide();
+      $('#page_show').hide();
+      $.ajax({
+        type: 'GET',
+        url: "{% url 'datepicker_to' %}",
+        data: { date_val: date },
+        dataType: 'json',
+        success: function (data) {
+          var dat = JSON.parse(data.obj);
+          console.log(dat.length);
+          txt = '';
+          demo = '';
+          for(var j = 1; j < dat.length; j++) {
+            console.log(dat[j-1]);
+            fil = JSON.parse(dat[j-1]);
+            for (var i = 0; i < fil.length - 1 ; i++) {
+              console.log(fil.length);
+              demo += "<td>" + fil[i]["date"] + "</td>";
+              demo += "<td>" + fil[i]["time"] + "</td>";
+              demo += "<td>" + fil[i]["status"] + "</td>";
+              demo += "<td>" + fil[i]["address"] + "</td>";
+              demo += "<td>" + fil[i]["city"] + "</td>";
+              demo += "<td>" + fil[i]["state"] + "</td>";
+              demo += "<td>" + fil[i]["zipcode"] + "</td>";
+              demo += "<td>" + fil[i]["country"] + "</td>";
+              demo += "<td>" + fil[i]["deposit"] + "</td>";
+              if(j === 2){
+                demo += '<td data-toggle="modal" data-target="#'+ dat[i]['id'].toString()+'_'+'TownAuction'+'_Modal" style="cursor: pointer;"><i class="fa fa-sticky-note-o" aria-hidden="true"></i></td>';
+              }
+              else {
+                demo += '<td data-toggle="modal" data-target="#'+ dat[i]['id'].toString()+'_'+ 'BayStateAuction' +'_Modal" style="cursor: pointer;"><i class="fa fa-sticky-note-o" aria-hidden="true"></i></td>';
+              }                      txt += demo;
+            }
+          }
+          document.getElementById('t_tr').innerHTML = txt;
+          $('#t_tr').show();
+        }
+      });
+    }});;
+  } );
+
+  </script>
+
+  <script type="text/javascript">
+
+  $("#activex").change(function (e) {
+    if(e.target.checked === true){
+      $('#table_python').hide();
+      $('#page_show').hide();
+      $.ajax({
+        method: 'POST',
+        url: "{% url 'active' %}",
+        data: { data: this.value },
+        dataType: 'json',
+        success: function (data) {
+        }
+      });
+    }
+  });
+  $("#postponedx").change(function (e) {
+    if(e.target.checked === true){
+      $('#table_python').hide();
+      $('#page_show').hide();
+      $.ajax({
+        method: 'GET',
+        url: "{% url 'postponed' %}",
+        data: { data: this.value },
+        dataType: 'json',
+        success: function (data) {
+          var dat = JSON.parse(data.obj);
+          console.log(dat.length);
+          txt = '<table class="table table-hover" id="dev-table">\n' +
+          '\t\t\t\t\t\t<thead style="background-color: darkblue;color: white;">\n' +
+          '\t\t\t\t\t\t\t<tr>\n' +
+          '\t\t\t\t\t\t\t\t<th>Auction Date</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Time</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Status</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Address (click address below to view Map)</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>City</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>State</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Zip Code</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Country</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Page/Liber</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Deposit</th>\n' +
+          '                                <th>Notes</th>\n' +
+          '\t\t\t\t\t\t\t</tr>\n' +
+          '\t\t\t\t\t\t</thead><tbody>';
+          for(var j = 1; j <= dat.length; j++) {
+            console.log(dat[j-1]);
+            fil = JSON.parse(dat[j-1]);
+            console.log('fil -- ', fil);
+            demo = '';
+
+            for (var i = 0; i < fil.length; i++) {
+              txt += '<tr>';
+              demo += "<td>" + fil[i]["date"] + "</td>";
+              demo += "<td>" + fil[i]["time"] + "</td>";
+              demo += "<td>" + fil[i]["status"] + "</td>";
+              demo += "<td>" + fil[i]["address"] + "</td>";
+              demo += "<td>" + fil[i]["city"] + "</td>";
+              demo += "<td>" + fil[i]["state"] + "</td>";
+              demo += "<td>" + fil[i]["zipcode"] + "</td>";
+              demo += "<td>" + fil[i]["country"] + "</td>";
+              demo += "<td></td>";
+              demo += "<td>" + fil[i]["deposit"] + "</td>";
+              if(j === 2){
+                demo += '<td data-toggle="modal" data-target="#'+ fil[i]['id']+'_'+'TownAuction'+'_Modal" style="cursor: pointer;"><i class="fa fa-sticky-note-o" aria-hidden="true"></i></td>';
+              }
+              else {
+                demo += '<td data-toggle="modal" data-target="#'+ fil[i]['id']+'_'+ 'BayStateAuction' +'_Modal" style="cursor: pointer;"><i class="fa fa-sticky-note-o" aria-hidden="true"></i></td>';
+              }
+              txt += demo + '</tr>';
+            }
+          }
+          txt +='</tbody></table>';
+          document.getElementById('table_ajax').innerHTML = txt;
+          $('#table_ajax').show();
+        }
+      });
+    }
+    else{
+      $('#table_ajax').hide();
+      $('#table_python').show();
+      $('#page_show').show();
+
+    }
+  });
+  $("#cancelx").change(function (e) {
+    if(e.target.checked === true){
+      $('#table_python').hide();
+      $('#page_show').hide();
+      $('#t_tr').hide();
+      $.ajax({
+        method: 'GET',
+        url: "{% url 'cancelled' %}",
+        data: { data: this.value },
+        dataType: 'json',
+        success: function (data) {
+          var dat = JSON.parse(data.obj);
+          console.log(dat.length);
+          txt = '<table class="table table-hover" id="dev-table">\n' +
+          '\t\t\t\t\t\t<thead style="background-color: darkblue;color: white;">\n' +
+          '\t\t\t\t\t\t\t<tr>\n' +
+          '\t\t\t\t\t\t\t\t<th>Auction Date</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Time</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Status</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Address (click address below to view Map)</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>City</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>State</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Zip Code</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Country</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Page/Liber</th>\n' +
+          '\t\t\t\t\t\t\t\t<th>Deposit</th>\n' +
+          '                                <th>Notes</th>\n' +
+          '\t\t\t\t\t\t\t</tr>\n' +
+          '\t\t\t\t\t\t</thead><tbody>';
+          for(var j = 1; j <= dat.length; j++) {
+            console.log(dat[j-1]);
+            fil = JSON.parse(dat[j-1]);
+            console.log('fil -- ', fil);
+            demo = '';
+
+            for (var i = 0; i < fil.length; i++) {
+              console.log(fil.length)
+              console.log(demo);
+              txt += '<tr>';
+              demo += "<td>" + fil[i]["date"] + "</td>";
+              demo += "<td>" + fil[i]["time"] + "</td>";
+              demo += "<td>" + fil[i]["status"] + "</td>";
+              demo += "<td>" + fil[i]["address"] + "</td>";
+              demo += "<td>" + fil[i]["city"] + "</td>";
+              demo += "<td>" + fil[i]["state"] + "</td>";
+              demo += "<td>" + fil[i]["zipcode"] + "</td>";
+              demo += "<td>" + fil[i]["country"] + "</td>";
+              demo += "<td></td>";
+              demo += "<td>" + fil[i]["deposit"] + "</td>";
+              if(j === 2){
+                demo += '<td data-toggle="modal" data-target="#'+ fil[i]['id']+'_'+'TownAuction'+'_Modal" style="cursor: pointer;"><i class="fa fa-sticky-note-o" aria-hidden="true"></i></td>';
+              }
+              else {
+                demo += '<td data-toggle="modal" data-target="#'+ fil[    i]['id']+'_'+ 'BayStateAuction' +'_Modal" style="cursor: pointer;"><i class="fa fa-sticky-note-o" aria-hidden="true"></i></td>';
+              }
+              txt += demo + '</tr>';
+            }
+          }
+          txt +='</tbody></table>';
+          document.getElementById('table_ajax').innerHTML = txt;
+          $('#table_ajax').show();
+        }
+      });
+    }
+    else{
+      $('#table_ajax').hide();
+      $('#table_python').show();
+      $('#page_show').show();
+
+    }
+  });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% block menu %}
+                    <li>
+                        <a href="{% url 'about' %}">
+                            <span>About</span>
+                        </a>
+                    </li>
+                     <li>   
+                        <a href="{% url 'list' %}">
+                            <span>Listing</span>
+                        </a>
+                    </li>
+                     <li class="active" style="background-color: white; color: #00BCD4">
+                        <a href="{% url 'contact' %}">
+                            <span>Contact</span>
+                        </a>
+                    </li>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<!-- ======================================================== -->
+<!-- Header-->
+<!-- ======================================================== -->
+<header class="site_header">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-4">
+				<h2 class="header_title">
+					James <span>Gattuso</span> <span>Realty</span>
+				</h2>
+				<div class="mobile_icon pull-right">
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+			</div>
+			<div class="col-sm-8">
+				<div class="site_menu">
+					<nav class="main_menu">
+						<ul>
+							<li><a href="{% url 'about' %}">About</a></li>
+							<li><a href="{% url 'list' %}">Listing</a></li>
+							<li><a href="{% url 'contact' %}">Contact</a></li>
+							<!-- <li><a href="javascript:void(0)"><i class="fa fa-sign-out"></i></a></li> -->
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+
+
+<!-- ======================================================== -->
+<!-- Inner Page-->
+<!-- ======================================================== -->
+<div class="main">
+
+	<section class="inner_page_wrap">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="page_title"><h1>Contact</h1></div>
+				</div>
+			</div>
+			<!-- /row -->
+		</div>
+
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-7">
+					<div class="contact_form">
+						<h2>We're here to help you</h2>
+						<p>Have a question? Write Us</p>
+						<form action="" name="contactform" method="post" id="contactform">
+							<div class="form-group">
+								<label for="yourname">Your Name</label>
+								<input type="text" name="yourname" class="form-control" placeholder="Enter your name" required>
+							</div>
+							<div class="form-group">
+								<label for="subject">Subject</label>
+								<input type="text" name="subject" class="form-control" placeholder="Example: Lorem Ipsum" required>
+							</div>
+							<div class="form-group">
+								<label for="youremail">Your Email</label>
+								<input type="email" name="youremail" class="form-control" placeholder="Example: xyz@example.com" required>
+							</div>
+							<div class="form-group">
+								<label for="yourmessage">Your Message</label>
+								<textarea name="yourmessage" id="yourmessage" cols="30" rows="5" placeholder="Comments/messages" class="form-control"></textarea>
+							</div>
+							<div class="form-group">
+								<button type="submit" class="btn btn-large btn-primary btn_contact">Send Message</button>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="col-sm-1"></div>
+				<div class="col-sm-4">
+					<div class="get_in_touch">
+						<h2>Get in touch with us</h2>
+						<div class="contact_box">
+							<div class="row">
+								<div class="col-sm-3">
+									<span class="fa fa-map-marker fa-3x"></span>
+								</div>
+								<div class="col-sm-9">
+									170, Garden Street <br>
+									25th avenue<br>
+									Jaipur
+								</div>
+							</div>
+						</div>
+						<!-- /.contact_box -->
+
+						<div class="contact_box">
+							<div class="row">
+								<div class="col-sm-3">
+									<span class="fa fa-envelope-o fa-3x"></span>
+								</div>
+								<div class="col-sm-9">
+									<a href="mailto:xyz@example.com" class="contact_mail">xyz@example.com</a>
+									<a href="mailto:xyz@example.com" class="contact_mail">xyz@example.com</a>
+								</div>
+							</div>
+						</div>
+						<!-- /contact_box -->
+
+						<div class="contact_box">
+							<div class="row">
+								<div class="col-sm-3">
+									<span class="fa fa-phone fa-3x"></span>
+								</div>
+								<div class="col-sm-9">
+									<a href="tel:+919874563210" class="contact_mail">(+91) 987 456 3210</a>
+									<a href="tel:+919874563210" class="contact_mail">(+91) 987 456 3210</a>
+								</div>
+							</div>
+						</div>
+						<!-- /contact_box -->
+
+					</div>
+					<!-- /get_in_touch -->
+				</div>
+
+			</div>
+		</div>
+		<!-- /container -->
+
+
+		<div class="container-fluid map_wrap">
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<h2>Find us on map</h2>
+				</div>
+				<div class="map">
+					<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d227748.99973783185!2d75.65047060832099!3d26.88514167791114!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396c4adf4c57e281%3A0xce1c63a0cf22e09!2sJaipur%2C+Rajasthan!5e0!3m2!1sen!2sin!4v1510076012001" width="" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+				</div>
+			</div>
+		</div>
+
+
+	</section>
+
+</div>
+<!-- /main -->
+
+
+
+<!-- ======================================================== -->
+<!-- Footer-->
+<!-- ======================================================== -->
+<footer class="site_footer">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="listing_footer">
+				<div class="col-sm-12">
+					<div class="footer_logo text-center">
+						<h2>
+							James <span>Gattuso</span> <span>Realty</span>
+						</h2>
+						<p class="copyright">© 2017 All Rights Reserved</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /row -->
+
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="powered_by text-center">
+					<p>Powered by <a href="http://www.senzalabs.com/" target="_blank">Senza Labs</a></p>
+				</div>
+			</div>
+		</div>
+		<!-- /row -->
+
+	</div>
+	<!-- /container-fluid -->
+</footer>
+
+{% endblock %}

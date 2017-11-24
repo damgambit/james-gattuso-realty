@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block menu %}
+                    <li>
+                        <a href="{% url 'about' %}">
+                            <span>About</span>
+                        </a>
+                    </li>
+                     <li class="active" style="background-color: white; color: #00BCD4">
+                        <a href="{% url 'list' %}">
+                            <span>Listing</span>
+                        </a>
+                    </li>
+                     <li>
+                        <a href="{% url 'contact' %}">
+                            <span>Contact</span>
+                        </a>
+                    </li>
+
+{% endblock %}
+
+
+{% block content %}
+{% endblock %}

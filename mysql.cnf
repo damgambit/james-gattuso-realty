@@ -1,0 +1,6 @@
+# mysql.cnf
+[client]
+database = 'property_development'
+user = 'property_development'
+password = 'admin@3$!'
+default-character-set = 'utf8'

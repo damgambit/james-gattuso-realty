@@ -1,0 +1,72 @@
+@media only screen and (min-width: 997px) {
+
+}
+
+@media only screen and (max-width: 996px) {	
+	
+
+
+}
+
+@media only screen and (min-width: 768px) {
+	
+}
+
+@media only screen and (max-width: 767px) {
+	.mobile_icon{display: inline-block;}
+	.main_menu{display: none; padding: 15px 0px; border-top: 2px solid rgb(255, 255, 255); border-radius: 10px;  border-bottom: 2px solid rgb(255, 255, 255); margin-top: 30px; margin-bottom: 30px; }
+	.site_header .header_title {display: inline-block;}
+	.mobile_icon {margin-top: 17px;}
+	.site_filter .date_wrap {text-align: center;}
+	.site_filter .date_wrap .date_field {  position: relative; width: 49%; display: inline-block; } 
+	.site_menu .main_menu ul li {display: block; text-align: left; border-bottom: 1px solid #fefefe; }
+	.site_menu .main_menu ul li:last-child{border-bottom:0;}
+	.site_menu .main_menu ul li a{display: block; border-radius: 0;}
+	.check_box_wrap .pull-right {float: none !important;}
+	.site_filter .check_box_wrap .btn_cust {top: 0; margin-top: 20px;}
+	.site_filter .check_box_wrap p {margin-top: 20px;}
+	.site_filter .check_box_wrap {text-align: center;}
+	.site_filter .button_wrap .text-right{text-align: center !important;}
+	.site_filter .btn_cust {width: 150px;}
+	.site_filter .check_box_wrap  input[type="checkbox"] { transform: scale(1.3);  position: relative; display: inline-block; top: 2px;  margin-left: 16px; }
+	.footer_logo { margin-top: 30px; float: none !important;  text-align: center; }
+	.get_in_touch{margin-top: 50px;}
+	.page_title{margin-bottom: 40px;}
+
+
+}
+
+
+@media only screen and (min-width: 580px) {
+	
+}
+
+@media only screen and (max-width: 579px) {
+
+}
+
+@media only screen and (min-width: 481px) {
+	
+}
+
+@media only screen and (max-width: 480px) {
+	.site_filter .button_wrap a{ margin-left: 0; display: inline-block; margin-bottom: 15px;}
+	.site_filter .check_box_wrap .btn_cust {margin-top: 10px;}
+	.site_filter .button_wrap {margin-top: 30px;}
+	.site_filter .check_box_wrap ul {display: inline-block; text-align: left;}
+	.site_filter .check_box_wrap ul li {display: block;}
+	.site_filter .check_box_wrap ul li input[type="checkbox"] {margin-right: 8px;}
+	.listing_footer .listing_text {text-align: center;}
+} 
+
+@media only screen and (min-width: 381px) {
+	
+}
+
+@media only screen and (max-width: 380px) {
+	
+}
+
+@media only screen and (min-width: 767px) and (max-width: 991px){
+	
+}

@@ -1,0 +1,32 @@
+{% extends 'base_login.html' %}
+{% load static %}
+
+{% block content %}
+<div class="pen-title">
+  <h1>{{ name }}</h1>
+</div>
+<!-- Form Module-->
+<div class="module form-module">
+  {% if form.non_field_errors or err %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <a href="{% url 'login' %}"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></a>
+                 <strong>Warning!</strong> {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+            </div>
+  {% endif %}
+  <div class="toggle"><a href="{% url "register" %}" style="color: white"><i class="fa fa-times fa-pencil"></i>
+      <div class="tooltip">SignUp</div></a>
+  </div>
+  <div class="form">
+    <h2>Login to your account</h2>
+    <form method="post"> {% csrf_token %}
+        {{ form }}
+    {#  {{ form.password1 }}#}
+      <button type="submit"> Login </button>
+    </form>
+  </div>
+ <div class="cta"><a href="{% url 'forget_password' %}">Forgot your password?</a></div>
+</div>
+{% endblock %}
+

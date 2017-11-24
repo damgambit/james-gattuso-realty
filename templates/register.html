@@ -1,0 +1,66 @@
+{% extends 'base_login.html' %}
+{% load static %}
+
+{% block javascript %}
+  <script>
+  $("#errorshow").hide();
+    $("#id_username").change(function () {
+      $.ajax({
+          url: "{% url 'validate_username' %}",
+        data: $('#signupform').serialize(),
+        dataType: 'json',
+        success: function (data) {
+          if (data.is_taken) {
+            //alert(data.error_message);
+            $('#errorshow').show();
+          }
+          else{
+              $('#errorshow').hide();
+          }
+        }
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+
+<div class="pen-title">
+  <h1>{{ name }}</h1>
+</div>
+    <div class="module form-module">
+   {% if form.has_error or err %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <a href="{% url 'register' %}"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></a>
+                 <strong>Warning!</strong>
+            {{ msg }}
+{#            {% endfor %}#}
+            </div>
+  {% endif %}
+        <div class="toggle"><a href="{% url "login" %}" style="color: white"><i class="fa fa-times fa-pencil"></i>
+      <div class="tooltip">Login</div></a>
+  </div>
+    <div class="form">
+    <h2>Create an account</h2>
+    <form method="post" id="signupform"> {% csrf_token %}
+        {{ form.username.label }}
+        <div class="form-group has-error">
+        {{  form.username }}
+            <p style="color: red" id="errorshow"> Username Exist!!</p>
+        </div>
+        {{ form.first_name.label }}
+        {{  form.first_name }}
+        {{ form.last_name.label }}
+        {{  form.last_name }}
+        {{ form.email.label }}
+        {{  form.email }}
+        {{ form.password1.label }}
+        {{  form.password1 }}
+        {{ form.password2.label }}
+        {{  form.password2 }}
+      <button>Register</button>
+    </form>
+</div>
+ <div class="cta"><a href="{% url 'forget_password' %}">Forgot your password?</a></div>
+    </div>
+{% endblock %}

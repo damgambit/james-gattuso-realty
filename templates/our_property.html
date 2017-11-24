@@ -1,0 +1,218 @@
+{% load static %}
+{% load mathfilters %}
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="{% static "assets/fonts/font-awesome.css" %}" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="{% static "assets/css/jquery.slider.min.css" %}" type="text/css">
+	<link rel="stylesheet" href="{% static "assets/css/owl.carousel.css" %}" type="text/css">
+	<link rel="stylesheet" href="{% static "css/bootstrap.css" %}" type="text/css">
+	<link rel="stylesheet" href="{% static "assets/css/selectize.css" %}" type="text/css">
+	<link rel="stylesheet" href="{% static "assets/css/style.css" %}" type="text/css">
+	<title>Our Property</title>
+</head>
+
+<body class="page-search" id="page-top">
+<script>
+    $("#sortingx").change(function () {
+      $.ajax({
+          url: "{% url 'get_data' %}",
+        data: $('#id_date').value(),
+        dataType: 'json',
+          success: function (data) {
+
+          }
+      });
+    });
+</script>
+	<!-- Preloader -->
+	<div id="page-preloader">
+		<div class="loader-ring"></div>
+		<div class="loader-ring2"></div>
+	</div>
+	<!-- End Preloader -->
+
+	<!-- Wrapper -->
+	<div class="wrapper">
+		<!-- Start Header -->
+		<div id="header"></div>
+		<!-- End Header -->
+
+		<!-- Page Content -->
+		<div id="page-content-search">
+			<div class="container">
+				<div class="wide_container_2">
+					<div id="tab1" class="tab">
+						<div class="col-xs-12 content_2">
+							<div class="col-md-12">
+								<!-- Range slider -->
+								<div class="explore_grid">
+									<div class="row">
+										<div class="explore col-xs-12">
+											<h2>Properties for rent</h2>
+											<h5 class="team-color col-sm-offset-3 col-sm-6 col-xs-offset-1 col-xs-10">Lorem Ipsum is simply dummy text of the printing and Lorem Ipsum has been the industry's standard </h5>
+										</div>
+										<form method="post">
+											<div class="col-md-2 col-sm-3">
+												<div class="form-inline">
+													<label class="price-range">Deposit Range:</label>
+												</div>
+											</div>
+											<div class="col-md-8 col-sm-7">
+												<div class="form-group">
+													<div class="price-range">
+														<input class="price-input" type="text" name="price" value="0;20000">
+													</div>
+												</div>
+											</div>
+											<div class="select-block no-border pull-right col-sm-2 col-xs-12">
+												<select class="selection" id="sortingx">
+													<option>Sort By:</option>
+													<option name="date" value="date" id="id_date">Date</option>
+													<option name="price" value="price" id="id_price">Price</option>
+													<option name="type" value="type" id="id_type">Type</option>
+												</select>
+											</div>	<!-- select-block -->
+										</form>
+									</div><!-- row -->
+								</div>
+								<!-- End Range slider -->
+								<div class="wide-2">
+									<div class="container">
+										<div class="row">
+                                            {% for each_property in page.object_list %}
+											<div class="col-md-3 col-sm-3 col-xs-6 prop">
+												<div class="wht-cont">
+													<div class="exp-img-2" style="background:url(http://placehold.it/255x200) center;background-size: cover;">
+														<span class="filter"></span>
+														<span class="ffs-bs"><label for="op" class="btn btn-small btn-primary">browse photos</label></span>
+														<div class="overlay">
+															<div class="img-counter">23 Photo</div>
+														</div>
+													</div>
+													<div class="item-title">
+														<h4>
+                                                        {% if each_property.status == '' %}
+                                                             Unknown
+                                                        {% else %}
+                                                            {{ each_property.status }}
+                                                        {% endif %}
+                                                        </h4>
+														<p class="team-color">{{ each_property.address }}</p>
+														<div class="col-md-7 col-sm-7 col-xs-7">
+															<p>Studio - 2 bd</p>
+														</div>
+														<div class="col-md-5 col-sm-5 col-xs-5">
+															<p>86 m<span class="rank">2</span></p>
+														</div>
+														<div class="col-md-7 col-sm-7 col-xs-7 lft-brd"></div>
+														<div class="col-md-5 col-sm-5 col-xs-5 lft-brd"></div>
+													</div>
+													<hr>
+													<div class="item-title btm-part">
+														<div class="row">
+															<div class="col-md-8 col-sm-8 col-xs-8">
+																<p>Deposit | {{ each_property.deposit }}</p>
+																<p class="team-color">Auction Date : {{ each_property.date }}</p>
+															</div>
+															<div class="col-md-4 col-sm-4 col-xs-4 favorite">
+																<div class="bookmark" data-bookmark-state="empty">
+																	<span class="title-add">Add to bookmark</span>
+																</div>
+																<div class="compare" data-compare-state="empty">
+																	<span class="plus-add">Add to compare</span>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+						        </div>
+						<div class="col-xs-12">
+							<div class="col-md-10 col-md-offset-1 col-xs-12">
+								<nav id="nav-below" class="site-navigation paging-navigation navbar">
+                                    {% if not page.has_previous %}
+									<div class="nav-previous" disabled></div>
+                                    {% else %}
+                                        <div class="nav-previous"><a href="?page={{ page.previous_page_number }}">PREV PAGE</a></div>
+                                    {% endif %}
+									<ul class="pagination pagination-lg">
+                                        {% if page.has_previous %}
+                                            <li><a href="?page={{ page.previous_page_number }}">{{ page.previous_page_number }}</a></li>
+										{% endif %}
+                                        <li><a class="active" href="?page={{ page.number }}">{{ page.number }}</a></li>
+                                        {% if page.has_next %}
+                                            <li><a href="?page={{ page.next_page_number }}">{{ page.next_page_number }}</a></li>
+										    {% if page.next_page_number != num_page %}
+                                                <li><a href="?page={{ num_page|sub:1 }}">...</a></li>
+										        <li><a href="?page={{ num_page }}">{{ num_page }}</a></li>
+                                            {% endif %}
+                                        {% endif %}
+
+									</ul>
+                                    {% if not page.has_next %}
+									<div class="nav-next" disabled></div>
+                                    {% else %}
+                                        <div class="nav-next"><a href="?page={{ page.next_page_number }}">NEXT PAGE</a></div>
+                                    {% endif %}
+								</nav>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+        </div>
+    </div>
+	<!-- end Page Content -->
+
+	<!-- Start Footer -->
+  <div id="footer"></div>
+  <!-- End Footer -->
+	<!-- Modal login, register, custom gallery -->
+	<div id="login-modal-open"></div>
+	<div id="register-modal-open"></div>
+	<div class="custom-galery">
+		<input type="checkbox" class="gal" id="op">
+		<div class="lower"></div>
+		<div class="overlay overlay-hugeinc">
+			<label for="op"></label>
+			<nav>
+				<!-- Owl carousel -->
+				<div class="owl-carousel owl-theme carousel-full-width owl-demo-3">
+					<div class="item" style="background-image: url(http://placehold.it/950X800);"></div>
+					<div class="item" style="background-image: url(http://placehold.it/800X650);"></div>
+				</div>
+				<!-- End Owl carousel -->
+			</nav>
+		</div>
+	</div>
+	<!-- End Modal login, register, custom gallery -->
+
+	<script type="text/javascript" src="{% static "assets/js/jquery-2.1.4.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "assets/js/jquery-migrate-1.2.1.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "assets/bootstrap/js/bootstrap.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "assets/js/owl.carousel.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "assets/js/jquery.placeholder.js" %}"></script>
+	<script type="text/javascript" src="{% static "assets/js/retina-1.1.0.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "assets/js/masonry.pkgd.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "assets/js/selectize.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "assets/js/tmpl.js" %}"></script>
+	<script type="text/javascript" src="{% static "assets/js/jquery.dependClass-0.1.js" %}"></script>
+	<script type="text/javascript" src="{% static "assets/js/draggable-0.1.js" %}"></script>
+	<script type="text/javascript" src="{% static "assets/js/jquery.slider.js" %}"></script>
+	
+	<script type="text/javascript" src="{% static "assets/js/custom.js" %}"></script>
+	<!--[if gt IE 8]>
+	<script type="text/javascript" src="{% static "assets/js/ie.js" %}"></script>
+	<![endif]-->
+</body>
+</html>
+
