@@ -59,7 +59,7 @@ def parcer():
     # Auction Date,Time,Status,Address,City,State,Zip Code,County,Page / Liber,Deposit
     reader = csv.reader(f)
     for row in reader:
-        if row[0] = 'Auction Date':
+        if row[0] == 'Auction Date':
             continue
         c = TownAuction.objects.get_or_create(date=datetime.datetime.strptime(str(row[0]), '%m/%d/%y'),
                                               time=row[1],
