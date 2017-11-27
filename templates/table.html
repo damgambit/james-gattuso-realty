@@ -23,7 +23,7 @@
 				<div class="site_menu">
 					<nav class="main_menu">
 						<ul>
-							<li><a href="{% url 'about' %}">Home [TODO]</a></li>
+							<li><a href="{% url 'about' %}">Home </a></li>
 							<li><a href="{% url 'list' %}">Listing</a></li>
 							<li><a href="{% url 'contact' %}">Contact</a></li>
 							<!-- <li><a href="javascript:void(0)"><i class="fa fa-sign-out"></i></a></li> -->
@@ -72,21 +72,21 @@
 							<div class="newCheck">
 								<input type="checkbox" name="auction" class="active" id="active_box">
 								<label class="chklabel"></label>
-								<span>Active:<span id="count_active">[TODO]</span></span>
+								<span>Active:<span id="count_active"></span></span>
 							</div>
 						</li>
 						<li>
 							<div class="newCheck">
 								<input type="checkbox" name="auction" class="postponed" id="postponed_box">
 								<label class="chklabel"></label>
-								<span>Postponed:<span id="count_postponed">[TODO]</span></span>
+								<span>Postponed:<span id="count_postponed"></span></span>
 							</div>
 						</li>
 						<li>
 							<div class="newCheck">
 								<input type="checkbox" name="auction" class="cancelled" id="cancel_box">
 								<label class="chklabel"></label>
-								<span>Cancelled:<span id="count_cancel">[TODO]</span></span>
+								<span>Cancelled:<span id="count_cancel"></span></span>
 							</div>
 						</li>
 					</ul>
@@ -98,8 +98,8 @@
 			<div class="col-sm-3 col5">
 				<div class="button_wrap">
 					<div class="text-right">
-						<a href="http://zunaventures.herokuapp.com/export_all/All" class="btn_cust">Export Excel [TODO]</a>
-						<a href="http://zunaventures.herokuapp.com/logout" class="btn_cust">Sign Out [TODO]</a>
+						<a onclick="getExcel()" class="btn_cust">Export Excel </a>
+						<a href="{% url 'logout' %}" class="btn_cust">Sign Out </a>
 					</div>
 					<div class="clearfix"></div>
 				</div>
@@ -240,22 +240,20 @@ jQuery(function(){
 		getAPIData();
 	});
 });
-// jQuery( function() {
-// 	jQuery( "#fromDate" ).datepicker({onSelect: function(date){
-// 		//console.log(date);
-// 		send_data['date_from'] = date;
-// 		resetPaginationHTML();
-// 		getAPIData();
-// 	}});
-// });
-// jQuery( function() {
-// 	jQuery( "#toDate" ).datepicker({onSelect: function(date){
-// 		//console.log(date);
-// 		send_data['date_to'] = date;
-// 		resetPaginationHTML();
-// 		getAPIData();
-// 	}});
-// });
+jQuery( function() {
+	jQuery( "#fromDate" ).datepicker({onSelect: function(date){
+		console.log(date);
+		send_data['date_from'] = date;
+		getAPIData();
+	}});
+});
+jQuery( function() {
+	jQuery( "#toDate" ).datepicker({onSelect: function(date){
+		//console.log(date);
+		send_data['date_to'] = date;
+		getAPIData();
+	}});
+});
 
 // $("#closeSearch").on("click", function(){
 // 	$("#searchz").val("");
@@ -283,30 +281,28 @@ jQuery(function(){
 // 	$(".searchBtn").trigger("click");
 // });
 
-// $(".active").change(function(e){
-// 	if(e.target.checked)
-// 		send_data['active'] = true;
-// 	else
-// 		send_data['active'] = false;
-// 	resetPaginationHTML();
-// 	getAPIData();
-// });
-// $(".postponed").change(function(e){
-// 	if(e.target.checked)
-// 		send_data["postponed"] = true;
-// 	else
-// 		send_data["postponed"] = false;
-// 	resetPaginationHTML();
-// 	getAPIData();
-// });
-// $(".cancelled").change(function(e){
-// 	if(e.target.checked)
-// 		send_data['cancel'] = true;
-// 	else
-// 		send_data['cancel'] = false;
-// 	resetPaginationHTML();
-// 	getAPIData();
-// });
+$(".active").change(function(e){
+	if(e.target.checked)
+		send_data['active'] = true;
+	else
+		send_data['active'] = false;
+	getAPIData();
+	console.log('done')
+});
+$(".postponed").change(function(e){
+	if(e.target.checked)
+		send_data["postponed"] = true;
+	else
+		send_data["postponed"] = false;
+	getAPIData();
+});
+$(".cancelled").change(function(e){
+	if(e.target.checked)
+		send_data['cancel'] = true;
+	else
+		send_data['cancel'] = false;
+	getAPIData();
+});
 
 
 function getAPIData(){
@@ -338,6 +334,19 @@ function getAPIData(){
 	});
 }
 
+function getExcel() {
+
+	$.ajax({
+		method: 'GET',
+		url: '/ajax/get_xlsx/',
+		data: send_data,
+		success: function(data){
+			window.location = '/ajax/get_xlsx_from_file/'
+		}
+	});
+
+}
+
 function mySearch() {
     var $rows = $('#listing tr');
     $('#search').keyup(function() {
@@ -350,6 +359,14 @@ function mySearch() {
         }).hide();
     });
 }
+
+
+
+
+
+
+
+
 
 
 

@@ -49,12 +49,9 @@ urlpatterns = [
     url(r'^ajax/validate_username/$', views.validate_username, name='validate_username'),
     url(r'^ajax/password_validation/$', views.password_validation, name='password_validation'),
     url(r'^ajax/get_all/$', views.get_all, name='get_all'),
-    url(r'^ajax/active/$', views.active, name='active'),
-    url(r'^ajax/postponed/$', views.postponed, name='postponed'),
-    url(r'^ajax/cancelled/$', views.cancelled, name='cancelled'),
+    url(r'^ajax/get_xlsx/$', views.get_xlsx, name='get_xlsx'),
+    url(r'^ajax/get_xlsx_from_file/$', views.get_xlsx_from_file, name='get_xlsx_from_file'),
     url(r'^api/', include(router.urls, namespace='api')),
-    url(r'townauction/update-partial/(?P<pk>\d+)/$', views.TownAuctionView.as_view()),
-    url(r'baystateauction/update-partial/(?P<pk>\d+)/$', views.BayStateAuctionView.as_view(), name='baystateauction'),
     url(r'timeline', views.TimelineView.as_view(), name='timeline'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

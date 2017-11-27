@@ -26,6 +26,9 @@ from development.serializers import ( BayStateAuctionSerializer,
                                     LandMarkAuctionSerliazer,
                                      CommonWealthAuctionSerliazer)
 import openpyxl
+import mimetypes
+import os
+import pandas as pd
 from rest_framework import filters
 # from django_filters import rest_framework as filters
 from openpyxl.writer.excel import save_virtual_workbook
@@ -170,8 +173,8 @@ def login_view(request):
             'form': form,
             'name': "Login"
         }
-    print('parcing')
-    parcer()
+    # print('parcing')
+    # parcer()
     return render(request, 'login.html', context)
 
 
@@ -412,119 +415,185 @@ def password_validation(request):
     return JsonResponse(data)
 
 @login_required(login_url='login')
-def get_all(request):
-    # bsas = JSONRenderer().render(BayStateAuction.objects.all().data)
-    # tasl = JSONRenderer().render(BayStateAuction.objects.all().data)
-    # obj = JSONRenderer().render([bsas, tasl])
-    data = list(BayStateAuction.objects.values()) + \
-           list(TownAuction.objects.values()) + \
-           list(CommonWealthAuction.objects.values()) + \
-           list(Pesco.objects.values()) + \
-           list(TacheAuctionAndSales.objects.values()) + \
-           list(LandMarkAuction.objects.values()) 
-    return JsonResponse(data, safe=False)
+def get_all(request, type = 'json'):
+
+    is_active = request.GET.get('active', None)
+    is_postponed = request.GET.get('postponed', None)
+    is_cancel = request.GET.get('cancel', None)
+    date_from = request.GET.get('date_from', None)
+    date_to = request.GET.get('date_to', None)
+
+    if is_active == "true":
+        is_active = True
+    else:
+        is_active = False
+    if is_postponed == "true":
+        is_postponed = True  
+    else:  
+        is_postponed = False    
+    if is_cancel == "true":
+        is_cancel = True
+    else:
+        is_cancel = False
+        
+    if date_from == '':
+        date_from = datetime.datetime(1600, 1, 1, 0, 0).date()
+    else: 
+        date_from = datetime.datetime.strptime(date_from, '%m/%d/%Y').date()
+
+    if date_to == '':
+        date_to = datetime.datetime(2099, 1, 1, 0, 0).date()
+    else:
+        date_to = datetime.datetime.strptime(date_to, '%m/%d/%Y').date()
+
+    filtering = is_active or is_postponed or is_cancel
+    
+    print(not filtering)
+    print(is_active, is_cancel, is_postponed)
+
+    bsav = []
+    tasv = []
+    tav = []
+    pev = []
+    lmav = []
+    hrev = []
+    cwav = []
+
+    if not filtering:
+        print("[*] sending all")
+
+        bsav += list(BayStateAuction.objects.filter(date__range=[date_from, date_to]).values()) 
+        tav += list(TownAuction.objects.filter(date__range=[date_from, date_to]).values()) 
+        cwav += list(CommonWealthAuction.objects.filter(date__range=[date_from, date_to]).values()) 
+        pev += list(Pesco.objects.filter(date__range=[date_from, date_to]).values()) 
+        tasv += list(TacheAuctionAndSales.objects.filter(date__range=[date_from, date_to]).values()) 
+        lmav += list(LandMarkAuction.objects.filter(date__range=[date_from, date_to]).values())
+
+    if filtering:
+        if is_active:
+            print("[*] sending active")
+
+            bsav += list(BayStateAuction.objects.filter(status__icontains='Continued', 
+                date__range=[date_from, date_to]).values())
+            tasv += list(TacheAuctionAndSales.objects.filter(status__icontains='ON TIME',
+                date__range=[date_from, date_to]).values())
+            tav += list(TownAuction.objects.filter(status__icontains='On_Time', 
+                date__range=[date_from, date_to]).values())
+            pev += list(Pesco.objects.filter(date__range=[date_from, date_to]).values())
+            lmav += list(LandMarkAuction.objects.filter(status__icontains='Currently', 
+                date__range=[date_from, date_to]).values()) 
+            cwav += list(CommonWealthAuction.objects.filter(status__icontains='3rd Party Purchase', 
+                date__range=[date_from, date_to]).values())
+        if is_postponed:
+            print("[*] sending postponed")
+            bsav += list(BayStateAuction.objects.filter(status__icontains='POSTPONED', 
+                date__range=[date_from, date_to]).values())
+            tasv += list(TacheAuctionAndSales.objects.filter(status__icontains='POSTPONED',
+                date__range=[date_from, date_to]).values())
+            tav += list(TownAuction.objects.filter(status__icontains='Postponed', 
+                date__range=[date_from, date_to]).values())
+        if is_cancel:
+            print("[*] sending cancel")
+            bsav += list(BayStateAuction.objects.filter(status__icontains='Cancel',
+                date__range=[date_from, date_to]).values())
+            tav += list(TownAuction.objects.filter(status__icontains='Cancel',
+                date__range=[date_from, date_to]).values())
+        
+    
+    data = bsav + tasv + tav + pev + lmav + cwav
+
+    if type == 'json':
+        return JsonResponse(data, safe=False)
+    if type == 'list':
+        return data
+
+def get_xlsx(request):
+    # wb = openpyxl.Workbook()
+    # ws = wb.active
+    # ws.title = 'Zunaventures'
+
+    # row_num = 0
+
+    # columns = [
+    #     (u"Date", 20),
+    #     (u"Time", 20),
+    #     (u"Status", 70),
+    #     (u"Address", 100),
+    #     (u"City", 50),
+    #     (u"State", 20),
+    #     (u"Zipcode", 20),
+    #     (u"Deposit", 20),
+    # ]
+    # for col_num in range(len(columns)):
+    #     c = ws.cell(row=row_num + 1, column=col_num + 1)
+    #     c.value = columns[col_num][0]
+    #     ft = Font(bold=True)
+    #     c.font = ft
+
+
+    data = get_all(request, type='list')
+    df = pd.DataFrame(data).drop(['id', 'message'], axis=1)
 
 
 
-@login_required(login_url='login')
-def active(request):
-    obj = list(chain(bsa.filter(status__icontains='Continued'), cwa.filter(status__icontains='3rd Party Purchase'),
-                     tas.filter(status__icontains='ON TIME'), ta.filter(status__icontains='On_Time'),
-                     pe.filter(status__icontains=''), lma.filter(status__icontains='Currently'),
-                     hre.filter(status__icontains='')))
-    if request.method == 'POST':
-        form = NotesForm(request.POST)
-        form_search = SearchForm(request.POST)
-        if form.is_valid():
-            _id = form.cleaned_data.get('id')
-            _cname = form.cleaned_data.get('cname')
-            text = form.cleaned_data.get('text')
-            if _cname == 'BayStateAuction' and bsa.filter(id=_id).exists():
-                mess = bsa.get(id=_id)
-            elif _cname == 'CommonWealthAuction' and cwa.filter(id=_id).exists():
-                mess = cwa.get(id=_id)
-            elif _cname == 'TacheAuctionAndSales' and tas.filter(id=_id).exists():
-                mess = tas.get(id=_id)
-            elif _cname == 'TownAuction' and ta.filter(id=_id).exists():
-                mess = ta.get(id=_id)
-            elif _cname == 'Pesco' and pe.filter(id=_id).exists():
-                mess = pe.get(id=_id)
-            elif _cname == 'LandMarkAuction' and lma.filter(id=_id).exists():
-                mess = lma.get(id=_id)
-            else:
-                mess = hre.get(id=_id)
-            mess.message = text
-            mess.message_avail = True
-            mess.save()
-            page = request.GET.get('page')
-            paginator = Paginator(obj, 10)
-            count = paginator.num_pages
-            form = NotesForm()
-            try:
-                paginator = paginator.page(page)
-            except PageNotAnInteger:
-                paginator = paginator.page(1)
-            except EmptyPage:
-                paginator = paginator.page(paginator.num_pages)
-            context = {
-                'page': paginator,
-                'num_page': count,
-                'forms': form
-            }
-            return render(request, "table.html", context)
-        elif form_search.is_valid():
-            search_data = form_search.cleaned_data.get('search_data')
-            obj = list(chain(bsa.filter(status__icontains=search_data),
-                             cwa.filter(status__icontains=search_data), tas.filter(status__icontains=search_data),
-                             ta.filter(status__icontains=search_data), pe.filter(status__icontains=search_data),
-                             lma.filter(status__icontains=search_data), hre.filter(status__icontains=search_data)))
-            if not obj:
-                return redirect('property', error=True, search_data=search_data)
-            else:
-                return redirect('search', search_data=search_data)
-    page = request.GET.get('page')
-    paginator = Paginator(obj, 10)
-    count = paginator.num_pages
-    form = NotesForm(None)
-    form_search = SearchForm(None)
-    try:
-        paginator = paginator.page(page)
-    except PageNotAnInteger:
-        paginator = paginator.page(1)
-    except EmptyPage:
-        paginator = paginator.page(paginator.num_pages)
-    context = {
-        'page': paginator,
-        'num_page': count,
-        'forms': form,
-        'form_search': form_search,
-        'stat': 'Active'
-    }
-    return render(request, "table.html", context)
+    print(df.head())
 
+    writer = pd.ExcelWriter('output.xlsx', engine='xlsxwriter')
+    df.to_excel(writer, sheet_name='Sheet1', index=False)
+    writer.save()
 
-@login_required(login_url='login')
-def postponed(request):
-    if request.is_ajax():
-        bsas = BayStateAuctionSerializer(bsa.filter(status__icontains='POSTPONED'), many=True)
-        tasl = TownAuctionSerializer(ta.filter(status__icontains='Postponed'), many=True)
-        bsas = JSONRenderer().render(bsas.data)
-        tasl = JSONRenderer().render(tasl.data)
-        obj = JSONRenderer().render([bsas, tasl])
-        data = {'obj': obj}
-        return JsonResponse(data)
+    filename = 'output.xlsx'
 
+    file_full_path = "output.xlsx"
 
-@login_required(login_url='login')
-def cancelled(request):
-    if request.is_ajax():
-        bsas = BayStateAuctionSerializer(bsa.filter(status__icontains='Cancel'), many=True)
-        tasl = TownAuctionSerializer(ta.filter(status__icontains='Cancel'), many=True)
-        bsas = JSONRenderer().render(bsas.data)
-        tasl = JSONRenderer().render(tasl.data)
-        obj = JSONRenderer().render([bsas, tasl])
-        data = {'obj': obj}
-        return JsonResponse(data)
+    with open(file_full_path,'r') as f:
+        data = f.read()
+
+    response = HttpResponse(data, content_type=mimetypes.guess_type(file_full_path)[0])
+    response['Content-Disposition'] = "attachment; filename={0}".format(filename)
+    response['Content-Length'] = os.path.getsize(file_full_path)
+
+    return response
+
+    # for obj in data:
+    #     row_num += 1
+    #     print(row_num)
+    #     if not 'deposit' in obj:
+    #         obj['deposit'] = 0
+    #     row = [
+    #         obj['date'],
+    #         obj['time'],
+    #         obj['status'],
+    #         obj['address'],
+    #         obj['city'],
+    #         obj['state'],
+    #         obj['zipcode'],
+    #         obj['deposit'],
+    #     ]
+    #     for col_num in range(len(row)):
+    #         c = ws.cell(row=row_num + 1, column=col_num + 1)
+    #         c.value = row[col_num]
+    #         # c.alignment.wrap_text = True
+
+    # filename = 'zunaventures.xlsx'
+    # response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    # response['Content-Disposition'] = 'attachment; filename=' + filename
+    # wb.save(response)
+    # return response
+
+def get_xlsx_from_file(request):
+    filename = 'output.xlsx'
+
+    file_full_path = "output.xlsx"
+
+    with open(file_full_path,'r') as f:
+        data = f.read()
+
+    response = HttpResponse(data, content_type=mimetypes.guess_type(file_full_path)[0])
+    response['Content-Disposition'] = "attachment; filename={0}".format(filename)
+    response['Content-Length'] = os.path.getsize(file_full_path)
+
+    return response
 
 
 def export_xlsx_all(request, type = "Active"):
@@ -614,39 +683,6 @@ def export_xlsx_all(request, type = "Active"):
     wb.save(response)
     return response
 
-
-class BayStateAuctionView(generics.ListAPIView):
-    queryset = BayStateAuction.objects
-    serializer_class = BayStateAuctionSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('status', 'address', 'state')
-
-    # pagination_class = StandardResultsSetPagination
-
-    def partial_update(self, request, pk=None):
-        serializer = BayStateAuctionSerializer(request.user, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    def put(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
-
-
-class TownAuctionView(generics.ListAPIView):
-    queryset = TownAuction.objects
-    serializer_class = TownAuctionSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('status', 'address', 'state')
-
-    def partial_update(self, request, pk=None):
-        serializer = TownAuctionSerializer(request.user, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    def put(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
 
 
 
