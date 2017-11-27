@@ -416,7 +416,12 @@ def get_all(request):
     # bsas = JSONRenderer().render(BayStateAuction.objects.all().data)
     # tasl = JSONRenderer().render(BayStateAuction.objects.all().data)
     # obj = JSONRenderer().render([bsas, tasl])
-    data = list(BayStateAuction.objects.values()) + list(TownAuction.objects.values())
+    data = list(BayStateAuction.objects.values()) + \
+           list(TownAuction.objects.values()) + \
+           list(CommonWealthAuction.objects.values()) + \
+           list(Pesco.objects.values()) + \
+           list(TacheAuctionAndSales.objects.values()) + \
+           list(LandMarkAuction.objects.values()) 
     return JsonResponse(data, safe=False)
 
 
