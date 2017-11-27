@@ -1,357 +1,19 @@
-{% extends 'base.html' %}
-{% load static %}
+/*
+  SortTable
+  version 2
+  7th April 2007
+  Stuart Langridge, http://www.kryogenix.org/code/browser/sorttable/
 
-{% block content %}
+  Instructions:
+  Download this file
+  Add <script src="sorttable.js"></script> to your HTML
+  Add class="sortable" to any table you'd like to make sortable
+  Click on the headers to sort
 
-
-<!-- ======================================================== -->
-<!-- Header-->
-<!-- ======================================================== -->
-
-<header class="site_header">
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-sm-4">
-				<a href="javascript:void(0)"><h2 class="header_title">James <span>Gattuso</span> <span>Realty</span></h2></a>
-				<div class="mobile_icon pull-right">
-					<span></span>
-					<span></span>
-					<span></span>
-				</div>
-			</div>
-			<div class="col-sm-8">
-				<div class="site_menu">
-					<nav class="main_menu">
-						<ul>
-							<li><a href="{% url 'about' %}">About</a></li>
-							<li><a href="{% url 'list' %}">Listing</a></li>
-							<li><a href="{% url 'contact' %}">Contact</a></li>
-							<!-- <li><a href="javascript:void(0)"><i class="fa fa-sign-out"></i></a></li> -->
-						</ul>
-					</nav>
-				</div>
-			</div>
-		</div>
-	</div>
-</header>
-
-
-<!-- ======================================================== -->
-<!-- Filter-->
-<!-- ======================================================== -->
-<section class="site_filter">
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-sm-2 col2">
-				<div class="date_wrap">
-					<div class="date_field">
-						<input type="text" name="fromDate" id="fromDate" class="input_date form-control" placeholder="From">
-						<span class="fa fa-calendar"></span>
-					</div>
-					<div class="date_field">
-						<input type="text" name="toDate" id="toDate" class="input_date form-control" placeholder="To">
-						<span class="fa fa-calendar"></span>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-3 col3">
-				<div class="search_wrap">
-					
-					<fieldset class="form-group">
-					    <input class="form-control" type="text" id="search" onkeyup="mySearch()" placeholder="Type to search"> 
-					</fieldset>
-
-					
-				</div>
-			</div>
-			<div class="col-sm-4 col4">
-				<div class="check_box_wrap">
-					<p>Show auctions that are:</p>
-					<ul>
-						<li>
-							<div class="newCheck">
-								<input type="checkbox" name="auction" class="active" id="active_box">
-								<label class="chklabel"></label>
-								<span>Active:<span id="count_active">486</span></span>
-							</div>
-						</li>
-						<li>
-							<div class="newCheck">
-								<input type="checkbox" name="auction" class="postponed" id="postponed_box">
-								<label class="chklabel"></label>
-								<span>Postponed:<span id="count_postponed">39</span></span>
-							</div>
-						</li>
-						<li>
-							<div class="newCheck">
-								<input type="checkbox" name="auction" class="cancelled" id="cancel_box">
-								<label class="chklabel"></label>
-								<span>Cancelled:<span id="count_cancel">74</span></span>
-							</div>
-						</li>
-					</ul>
-					<div class="pull-right">
-						<a href="#" class="btn_cust" id="display_all">Display All</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-3 col5">
-				<div class="button_wrap">
-					<div class="text-right">
-						<a href="http://zunaventures.herokuapp.com/export_all/All" class="btn_cust">Export Excel</a>
-						<a href="http://zunaventures.herokuapp.com/logout" class="btn_cust">Sign Out</a>
-					</div>
-					<div class="clearfix"></div>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
-
-<section class="properties_table">
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-sm-121">
-				<div class="table_wrap table-responsive">
-					<table class="table sortable" id="list_data">
-						<thead>
-							<tr>
-								<th>Auction Date</th>
-								<th>Time</th>
-								<th>Status</th>
-								<th>Address (Click address below to view map)</th>
-								<th>City</th>
-								<th>State</th>
-								<th>Zip Code</th>
-								<th>Country</th>
-								<th>Page/Liber</th>
-								<th>Deposit</th>
-								<!-- <th>Add Notes</th> -->
-							</tr>
-						</thead>
-						<tbody id="listing">
-
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<!-- /col -->
-		</div>
-		
-	</div>
-	<!-- /container -->
-</section>
-
-<!-- ======================================================== -->
-<!-- Footer-->
-<!-- ======================================================== -->
-<footer class="site_footer">
-	<div class="container-fluid">
-		<div class="row">
-			<div class="listing_footer">
-				<div class="col-sm-10">
-					<p class="listing_text">While we will be unable to provide you the specific reason the property was removed from the sale list, we will be able to confirm the removal. The information provided on this website has been obtained from public sources or provided by third parties, the accuracy of which has not been independently verified and accordingly is for informational purposes only. Postings on this website do not constitute legal or professional advice and neither Towne Auction nor its affili-ates are responsible for or can be held liable for any inaccuracies or omissions. The purchase of a property at an auction sale is a legally binding transaction and the assistance of legal counsel is advisable.</p>
-				</div>
-				<div class="col-sm-2">
-					<div class="footer_logo pull-right">
-						<h2>
-							James <span>Gattuso</span> <span>Realty</span>
-						</h2>
-						<p class="copyright">© 2017 All Rights Reserved</p>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- /row -->
-
-		<div class="row">
-			<div class="col-sm-12">
-				<div class="powered_by text-center">
-					<p>Powered by <a href="http://www.senzalabs.com/" target="_blank">Senza Labs</a></p>
-				</div>
-			</div>
-		</div>
-		<!-- /row -->
-
-	</div>
-	<!-- /container-fluid -->
-</footer>
-<div class="modal fade" id="exModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Add Notes</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -22px;">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<form>
-
-					<div class="form-group">
-						<label for="message-text" class="form-control-label">Message:</label>
-						<textarea class="form-control" id="message-text"></textarea>
-					</div>
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary">Save</button>
-			</div>
-		</div>
-
-		<!-- </div> -->
-
-
-
-
-	</div>
-
-</div>
-
-{% endblock %}
-
-{% block javascript %}
-<script type="text/javascript">
-send_data = {};
-resetFilters();
-getAPIData()
-
-
-function resetFilters(){
-	$("#fromDate , #toDate , #searchz").val("");
-	$(".active , .postponed , .cancelled").prop("checked", false);
-	send_data['search'] = '';
-	send_data['format'] = 'json';
-	send_data['date_from'] = '';
-	send_data['date_to'] = '';
-	send_data['active'] = false;
-	send_data['postponed'] = false;
-	send_data['cancel'] = false;
-	send_data['page'] = 1;
-}
-
-
-jQuery(function(){
-
-	jQuery("#display_all").on("click", function(){
-		resetFilters();
-		resetPaginationHTML();
-		getAPIData();
-	});
-});
-// jQuery( function() {
-// 	jQuery( "#fromDate" ).datepicker({onSelect: function(date){
-// 		//console.log(date);
-// 		send_data['date_from'] = date;
-// 		resetPaginationHTML();
-// 		getAPIData();
-// 	}});
-// });
-// jQuery( function() {
-// 	jQuery( "#toDate" ).datepicker({onSelect: function(date){
-// 		//console.log(date);
-// 		send_data['date_to'] = date;
-// 		resetPaginationHTML();
-// 		getAPIData();
-// 	}});
-// });
-
-// $("#closeSearch").on("click", function(){
-// 	$("#searchz").val("");
-// 	$(".searchBtn").trigger("click");
-
-// });
-
-
-
-// jQuery( "#searchz" ).keyup(function(data){
-// 	if(data.keyCode === 13){
-// 		data = $(this).val();
-// 		send_data['search'] = data;
-// 		resetPaginationHTML();
-// 		getAPIData();
-// 	}
-// });
-// $( ".searchBtn").click(function(){
-// 	data = $("#searchz").val();
-// 	send_data['search'] = data;
-// 	resetPaginationHTML();
-// 	getAPIData();
-// })
-// $(document).ready(function(){
-// 	$(".searchBtn").trigger("click");
-// });
-
-// $(".active").change(function(e){
-// 	if(e.target.checked)
-// 		send_data['active'] = true;
-// 	else
-// 		send_data['active'] = false;
-// 	resetPaginationHTML();
-// 	getAPIData();
-// });
-// $(".postponed").change(function(e){
-// 	if(e.target.checked)
-// 		send_data["postponed"] = true;
-// 	else
-// 		send_data["postponed"] = false;
-// 	resetPaginationHTML();
-// 	getAPIData();
-// });
-// $(".cancelled").change(function(e){
-// 	if(e.target.checked)
-// 		send_data['cancel'] = true;
-// 	else
-// 		send_data['cancel'] = false;
-// 	resetPaginationHTML();
-// 	getAPIData();
-// });
-
-
-function getAPIData(){
-	$.ajax({
-		method: 'GET',
-		url: '/ajax/get_all/',
-		data: send_data,
-		success: function(result){
-			list_data = ``;
-			result.map(function(val){
-				list_data +=`
-				<tr>
-				<td>${val.date}</td>
-				<td>${val.time}</td>
-				<td>${val.status}</td>
-				<td>${val.address}</td>
-				<td>${val.city}</td>
-				<td>${val.state}</td>
-				<td>${val.zipcode}</td>
-				<td>${val.country}</td>
-				<td></td>
-				<td> ${val.deposit}</td>
-				</tr>
-				`;
-			});
-
-			document.getElementById('listing').innerHTML = list_data;
-		}
-	});
-}
-
-function mySearch() {
-    var $rows = $('#listing tr');
-    $('#search').keyup(function() {
-        var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
-            reg = RegExp(val, 'i'),
-            text;
-        $rows.show().filter(function() {
-            text = $(this).text().replace(/\s+/g, ' ');
-            return !reg.test(text);
-        }).hide();
-    });
-}
-
-
+  Thanks to many, many people for contributions and suggestions.
+  Licenced as X11: http://www.kryogenix.org/code/browser/licence.html
+  This basically means: do what you want with it.
+*/
 
 
 var stIsIE = /*@cc_on!@*/false;
@@ -671,10 +333,27 @@ sorttable = {
   }
 }
 
+/* ******************************************************************
+   Supporting functions: bundled here to avoid depending on a library
+   ****************************************************************** */
 
+// Dean Edwards/Matthias Miller/John Resig
+
+/* for Mozilla/Opera9 */
 if (document.addEventListener) {
     document.addEventListener("DOMContentLoaded", sorttable.init, false);
 }
+
+/* for Internet Explorer */
+/*@cc_on @*/
+/*@if (@_win32)
+    document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+    var script = document.getElementById("__ie_onload");
+    script.onreadystatechange = function() {
+        if (this.readyState == "complete") {
+            sorttable.init(); // call the onload handler
+        }
+    };
 /*@end @*/
 
 /* for Safari */
@@ -813,7 +492,3 @@ var forEach = function(object, block, context) {
 		resolve.forEach(object, block, context);
 	}
 };
-
-
-</script>
-{% endblock %}

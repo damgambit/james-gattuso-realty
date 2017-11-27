@@ -411,6 +411,15 @@ def password_validation(request):
         data['error'] = True
     return JsonResponse(data)
 
+@login_required(login_url='login')
+def get_all(request):
+    # bsas = JSONRenderer().render(BayStateAuction.objects.all().data)
+    # tasl = JSONRenderer().render(BayStateAuction.objects.all().data)
+    # obj = JSONRenderer().render([bsas, tasl])
+    data = list(BayStateAuction.objects.values()) + list(TownAuction.objects.values())
+    return JsonResponse(data, safe=False)
+
+
 
 @login_required(login_url='login')
 def active(request):
@@ -719,4 +728,4 @@ class TimelineView(MultipleModelAPIView):
                      (cwa, CommonWealthAuctionSerliazer), (lma, LandMarkAuctionSerliazer))
 
 
-        return queryList
+        return 'hi'

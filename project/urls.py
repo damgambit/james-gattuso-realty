@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'^password_reset_sent/$', password_reset_confirm, name='password_reset_sent'),
     url(r'^ajax/validate_username/$', views.validate_username, name='validate_username'),
     url(r'^ajax/password_validation/$', views.password_validation, name='password_validation'),
+    url(r'^ajax/get_all/$', views.get_all, name='get_all'),
     url(r'^ajax/active/$', views.active, name='active'),
     url(r'^ajax/postponed/$', views.postponed, name='postponed'),
     url(r'^ajax/cancelled/$', views.cancelled, name='cancelled'),
