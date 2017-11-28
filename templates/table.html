@@ -311,8 +311,9 @@ function getAPIData(){
 		url: '/ajax/get_all/',
 		data: send_data,
 		success: function(result){
+			console.log(result)
 			list_data = ``;
-			result.map(function(val){
+			result.data.map(function(val){
 				list_data +=`
 				<tr>
 				<td>${val.date}</td>
@@ -330,6 +331,9 @@ function getAPIData(){
 			});
 
 			document.getElementById('listing').innerHTML = list_data;
+			document.getElementById('count_cancel').innerHTML = result.cancel_counter;
+			document.getElementById('count_postponed').innerHTML = result.postponed_counter;
+			document.getElementById('count_active').innerHTML = result.active_counter;
 		}
 	});
 }

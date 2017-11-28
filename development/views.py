@@ -507,8 +507,32 @@ def get_all(request, type = 'json'):
     
     data = bsav + tasv + tav + pev + lmav + cwav
 
+    df = pd.DataFrame(data)
+
+    active_counter = len(df[df['status'].str.contains("Continued")]) + \
+             len(df[df['status'].str.contains("ON TIME")]) + \
+             len(df[df['status'].str.contains("On_Time")]) + \
+             len(df[df['status'].str.contains("Currently")]) + \
+             len(df[df['status'].str.contains("3rd Party Purchase")]) + \
+             len(df[df['status'] == ''])
+    print(active_counter)
+
+    postponed_counter = len(df[df['status'].str.contains("POSTPONED")]) + \
+             len(df[df['status'].str.contains("Postponed")]) 
+             
+    print(postponed_counter)
+
+    cancel_counter = len(df[df['status'].str.contains("Cancel")])
+    print(cancel_counter)
+
+    data1 = {}
+    data1['active_counter'] = active_counter
+    data1['postponed_counter'] = postponed_counter
+    data1['cancel_counter'] = cancel_counter
+    data1['data'] = data
+
     if type == 'json':
-        return JsonResponse(data, safe=False)
+        return JsonResponse(data1, safe=False)
     if type == 'list':
         return data
 
