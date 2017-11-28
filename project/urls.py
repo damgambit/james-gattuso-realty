@@ -31,14 +31,13 @@ logout_forbidden = user_passes_test(lambda u: u.is_anonymous(), '/')
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^list/$', views.list_all, name='list'),
+    url(r'^home/$', views.home, name='home'),
     url(r'^about/$', views.about, name='about'),
     url(r'^contact/$', views.contact, name='contact'),
     url(r'^contact_us/$', views.contact_us, name='contact_us'),
-    url(r'^export_all/(?P<type>[a-zA-Z]+)/$', views.export_xlsx_all, name='export_all'),
-    #url(r'^search/(?:search=(?P<search_data>[a-zA-Z]+))/$', views.search, name='search'),
     #url(r'^our_property/(?P<idx>[0-9\-1]+)', property, name='property'),
     url(r'^our_property/$', propertyx, name='property'),
-    url(r'^$', views.about, name='main'),
+    url(r'^$', views.home, name='main'),
     url(r'^login/$', login_forbidden(login_view), name='login'),
     url(r'^logout/$', logout_view, name='logout'),
     url(r'^register/$', SignUp, name='register'),
@@ -49,10 +48,10 @@ urlpatterns = [
     url(r'^ajax/validate_username/$', views.validate_username, name='validate_username'),
     url(r'^ajax/password_validation/$', views.password_validation, name='password_validation'),
     url(r'^ajax/get_all/$', views.get_all, name='get_all'),
+    url(r'^ajax/get_all_today/$', views.get_all_today, name='get_all_today'),
     url(r'^ajax/get_xlsx/$', views.get_xlsx, name='get_xlsx'),
     url(r'^ajax/get_xlsx_from_file/$', views.get_xlsx_from_file, name='get_xlsx_from_file'),
     url(r'^api/', include(router.urls, namespace='api')),
-    url(r'timeline', views.TimelineView.as_view(), name='timeline'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 if settings.DEBUG:

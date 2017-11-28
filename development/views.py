@@ -28,6 +28,7 @@ from development.serializers import ( BayStateAuctionSerializer,
 import openpyxl
 import mimetypes
 import os
+import time
 import pandas as pd
 from rest_framework import filters
 # from django_filters import rest_framework as filters
@@ -377,6 +378,10 @@ def list_all(request):
 
 
 @login_required(login_url='login')
+def home(request):
+    return render(request, 'home.html', {})
+
+@login_required(login_url='login')
 def about(request):
     return render(request, 'about.html', {})
 
@@ -507,29 +512,38 @@ def get_all(request, type = 'json'):
     if type == 'list':
         return data
 
+
+@login_required(login_url='login')
+def get_all_today(request):
+
+
+    
+    date = time.strftime('%Y-%m-%d')
+
+    bsav = []
+    tasv = []
+    tav = []
+    pev = []
+    lmav = []
+    hrev = []
+    cwav = []
+
+    print("[*] sending all")
+
+    bsav += list(BayStateAuction.objects.filter(date__icontains=date).values()) 
+    tav += list(TownAuction.objects.filter(date__icontains=date).values()) 
+    cwav += list(CommonWealthAuction.objects.filter(date__icontains=date).values()) 
+    pev += list(Pesco.objects.filter(date__icontains=date).values()) 
+    tasv += list(TacheAuctionAndSales.objects.filter(date__icontains=date).values()) 
+    lmav += list(LandMarkAuction.objects.filter(date__icontains=date).values())
+
+    
+    data = bsav + tasv + tav + pev + lmav + cwav
+
+    return JsonResponse(data, safe=False)
+
+
 def get_xlsx(request):
-    # wb = openpyxl.Workbook()
-    # ws = wb.active
-    # ws.title = 'Zunaventures'
-
-    # row_num = 0
-
-    # columns = [
-    #     (u"Date", 20),
-    #     (u"Time", 20),
-    #     (u"Status", 70),
-    #     (u"Address", 100),
-    #     (u"City", 50),
-    #     (u"State", 20),
-    #     (u"Zipcode", 20),
-    #     (u"Deposit", 20),
-    # ]
-    # for col_num in range(len(columns)):
-    #     c = ws.cell(row=row_num + 1, column=col_num + 1)
-    #     c.value = columns[col_num][0]
-    #     ft = Font(bold=True)
-    #     c.font = ft
-
 
     data = get_all(request, type='list')
     df = pd.DataFrame(data).drop(['id', 'message'], axis=1)
@@ -555,31 +569,6 @@ def get_xlsx(request):
 
     return response
 
-    # for obj in data:
-    #     row_num += 1
-    #     print(row_num)
-    #     if not 'deposit' in obj:
-    #         obj['deposit'] = 0
-    #     row = [
-    #         obj['date'],
-    #         obj['time'],
-    #         obj['status'],
-    #         obj['address'],
-    #         obj['city'],
-    #         obj['state'],
-    #         obj['zipcode'],
-    #         obj['deposit'],
-    #     ]
-    #     for col_num in range(len(row)):
-    #         c = ws.cell(row=row_num + 1, column=col_num + 1)
-    #         c.value = row[col_num]
-    #         # c.alignment.wrap_text = True
-
-    # filename = 'zunaventures.xlsx'
-    # response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    # response['Content-Disposition'] = 'attachment; filename=' + filename
-    # wb.save(response)
-    # return response
 
 def get_xlsx_from_file(request):
     filename = 'output.xlsx'
@@ -595,178 +584,3 @@ def get_xlsx_from_file(request):
 
     return response
 
-
-def export_xlsx_all(request, type = "Active"):
-    wb = openpyxl.Workbook()
-    ws = wb.active
-    ws.title = 'Zunaventures'
-
-    row_num = 0
-
-    columns = [
-        (u"Date", 20),
-        (u"Time", 20),
-        (u"Status", 70),
-        (u"Address", 100),
-        (u"City", 50),
-        (u"State", 20),
-        (u"Zipcode", 20),
-        (u"Deposit", 20),
-    ]
-    for col_num in range(len(columns)):
-        c = ws.cell(row=row_num + 1, column=col_num + 1)
-        c.value = columns[col_num][0]
-        ft = Font(bold=True)
-        c.font = ft
-
-    if type == 'Active':
-        queryset = list(
-            chain(bsa.filter(status__icontains='Continued'), cwa.filter(status__icontains='3rd Party Purchase'),
-                  tas.filter(status__icontains='ON TIME'), ta.filter(status__icontains='On_Time'),
-                  pe.filter(title__icontains=''), lma.filter(status__icontains='Currently'),
-                  hre.filter(status__icontains='')))
-        filename = 'zunaventures_active.xlsx'
-    elif type == 'Postponed':
-        queryset = list(chain(bsa.filter(status__icontains='POSTPONED'), cwa.filter(status__icontains='Postponed'),
-                              tas.filter(status__icontains='POSTPONED'), ta.filter(status__icontains='Postponed'),
-                              pe.filter(title__icontains='POSTPONED'), lma.filter(status__icontains='POSTPONED'),
-                              hre.filter(status__icontains='POSTPONED')))
-        filename = 'zunaventures_postponed.xlsx'
-    elif type == 'Cancelled':
-        queryset = list(chain(bsa.filter(status__icontains='Cancel'), cwa.filter(status__icontains='Cancel'),
-                              tas.filter(status__icontains='Cancel'), ta.filter(status__icontains='Cancel'),
-                              pe.filter(title__icontains='Cancel'), lma.filter(status__icontains='Cancel'),
-                              hre.filter(status__icontains='Cancel')))
-        filename = 'zunaventures_cancelled.xlsx'
-    elif type == 'All':
-        queryset = list(chain(bsa, cwa, tas, ta, pe, lma, hre))
-        filename = 'zunaventures_all.xlsx'
-    else:
-        obj = request.GET.get('data')
-        if obj == 'status':
-            queryset = list(chain(bsa.filter(status__icontains=type), cwa.filter(status__icontains=type),
-                                  tas.filter(status__icontains=type), ta.filter(status__icontains=type),
-                                  pe.filter(title__icontains=type), lma.filter(status__icontains=type),
-                                  hre.filter(status__icontains=type)))
-        elif obj == 'state':
-            queryset = list(chain(bsa.filter(status__icontains=type), cwa.filter(status__icontains=type),
-                                  tas.filter(status__icontains=type), ta.filter(status__icontains=type),
-                                  pe.filter(title__icontains=type), lma.filter(status__icontains=type),
-                                  hre.filter(status__icontains=type)))
-        elif obj == 'address':
-            queryset = list(chain(bsa.filter(status__icontains=type), cwa.filter(status__icontains=type),
-                                  tas.filter(status__icontains=type), ta.filter(status__icontains=type),
-                                  pe.filter(title__icontains=type), lma.filter(status__icontains=type),
-                                  hre.filter(status__icontains=type)))
-
-        filename = 'zunaventures_search.xlsx'
-
-    for obj in queryset:
-        row_num += 1
-        row = [
-            obj.date,
-            obj.time,
-            obj.status,
-            obj.address,
-            obj.city,
-            obj.state,
-            obj.zipcode,
-            obj.deposit,
-        ]
-        for col_num in range(len(row)):
-            c = ws.cell(row=row_num + 1, column=col_num + 1)
-            c.value = row[col_num]
-            # c.alignment.wrap_text = True
-
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=' + filename
-    wb.save(response)
-    return response
-
-
-
-
-class TimelineView(MultipleModelAPIView):
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('status', 'address', 'state', 'city')
-    flat = True
-    pagination_class = StandardResultsSetPagination
-
-    def get_queryList(self):
-        queryList = ((BayStateAuction.objects.all(), BayStateAuctionSerializer),
-                     (TownAuction.objects.all(), TownAuctionSerializer))
-
-        is_active = self.request.query_params.get('active', None)
-        is_postponed = self.request.query_params.get('postponed', None)
-        is_cancel = self.request.query_params.get('cancel', None)
-        date_from = self.request.query_params.get('date_from', None)
-        date_to = self.request.query_params.get('date_to', None)
-        search_data = self.request.query_params.get('search', None)
-
-        print(is_active, is_cancel, is_postponed, date_from, date_to, search_data)
-        bsa = BayStateAuction.objects.all()
-        tas = TacheAuctionAndSales.objects.all()
-        ta = TownAuction.objects.all()
-        pe = Pesco.objects.all()
-        lma = LandMarkAuction.objects.all()
-        hre = HarkinRealEstate.objects.all()
-        cwa = CommonWealthAuction.objects.all()
-
-
-        if search_data:
-            print("In Search")
-            bsa = bsa.filter(Q(status__icontains=search_data) |
-                         Q(address__icontains=search_data) |
-                         Q(city__icontains=search_data) |
-                         Q(state__icontains=search_data)
-                       )
-            ta = ta.filter( Q(status__icontains=search_data)|
-                        Q(address__icontains=search_data)|
-                        Q(city__icontains=search_data)|
-                        Q(state__icontains=search_data)
-                    )
-            cwa = cwa.filter(Q(status__icontains=search_data) |
-                         Q(address__icontains=search_data) |
-                         Q(city__icontains=search_data) |
-                         Q(state__icontains=search_data)
-                       )
-            lma = lma.filter( Q(status__icontains=search_data)|
-                        Q(address__icontains=search_data)|
-                        Q(city__icontains=search_data)|
-                        Q(state__icontains=search_data)
-                    )
-
-
-
-        if is_active == "true":
-            print("In Active")
-            bsa = bsa.filter(status__icontains='Continued')
-            ta = ta.filter(status__icontains='On_Time')
-        if is_postponed  == "true":
-            print("In Postponed")
-            bsa = bsa.filter(status__icontains='postponed')
-            ta = ta.filter(status__icontains='postponed')
-        if is_cancel  == "true":
-            print("In Cancel")
-            bsa = bsa.filter(status__icontains='cancel')
-            ta = ta.filter(status__icontains='cancel')
-
-        if date_from:
-            print("In Date From")
-            bsa = bsa.filter(date__range=[datetime.datetime.strptime(date_from, '%m/%d/%Y').date(),
-                             datetime.datetime(2099, 1, 1, 0, 0).date()])
-            ta = ta.filter(date__range=[datetime.datetime.strptime(date_from, '%m/%d/%Y').date(),
-                             datetime.datetime(2099, 1, 1, 0, 0).date()])
-        if date_to:
-            print("In Date To")
-            bsa = bsa.filter(date__range=[datetime.datetime(1600, 1, 1, 0, 0).date(),
-                             datetime.datetime.strptime(date_to, '%m/%d/%Y').date()])
-            ta = ta.filter(date__range=[datetime.datetime(1600, 1, 1, 0, 0).date(),
-                                          datetime.datetime.strptime(date_to, '%m/%d/%Y').date()])
-
-
-        queryList = ((bsa, BayStateAuctionSerializer), (ta, TownAuctionSerializer),
-                     (cwa, CommonWealthAuctionSerliazer), (lma, LandMarkAuctionSerliazer))
-
-
-        return 'hi'

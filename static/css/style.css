@@ -148,3 +148,14 @@ Contact Us Page
     font-weight: 300;
 }
 .newCheck span{position: relative; top: -2px;}
+
+
+.icon_dashboard {
+    font-size: 40px; 
+    color: #29ABE2;
+} 
+
+.dashboard_text {
+    font-size: 40px; 
+    color: #29ABE2;
+}   

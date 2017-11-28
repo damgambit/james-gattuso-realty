@@ -1,0 +1,419 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block menu %}
+                    <li class="active" style="background-color: white; color: #00BCD4">
+                        <a href="{% url 'about' %}">
+                            <span>Home</span>
+                        </a>
+                    </li>
+                     <li>   
+                        <a href="{% url 'list' %}">
+                            <span>Listing</span>
+                        </a>
+                    </li>
+                     <li>
+                        <a href="{% url 'contact' %}">
+                            <span>Contact</span>
+                        </a>
+                    </li>
+
+
+{% endblock %}
+
+
+{% block content %}
+ <!-- ======================================================== -->
+<!-- Header-->
+<!-- ======================================================== -->
+<header class="site_header">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-4">
+				<h2 class="header_title">
+					James <span>Gattuso</span> <span>Realty</span>
+				</h2>
+				<div class="mobile_icon pull-right">
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+			</div>
+			<div class="col-sm-8">
+				<div class="site_menu">
+					<nav class="main_menu">
+						<ul>
+							<li><a href="{% url 'home' %}">Home</a></li>
+							<li><a href="{% url 'list' %}">Listing</a></li>
+							<li><a href="{% url 'contact' %}">Contact</a></li>
+							<!-- <li><a href="javascript:void(0)"><i class="fa fa-sign-out"></i></a></li> -->
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+
+
+<!-- ======================================================== -->
+<!-- Inner Page-->
+<!-- ======================================================== -->
+
+<div class="main">
+
+	<section class="inner_page_wrap" id="dashboard_body">
+		<div class="container">
+			<div class="row">
+				<br>
+
+
+            <div class="row clearfix">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12"
+                     style="background-color: #eee; padding: 15px; 
+                            border-radius: 10px; border-width: 5px;
+                            border-color: #999;">
+                    <div class="card">
+                        <div class="header text-center">
+                            <h4 style="font-weight: 900; color: #29ABE2;">
+                                JAMES GATTUSO REALITY
+                            </h4>
+                            <br>
+                        </div>
+                        <div class="body">
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                    <i class="fa fa-compass"
+                                       aria-hidden="true"
+                                       style="font-size: 40px; color: #29ABE2;"></i>
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                                    <div class="row">
+                                        <p class="dashboard_text" id='address' style='font-size: 14px;'>
+                                            107 Sunset Drive
+                                        </p>
+                                        <p class="dashboard_text" id='city' style='font-size: 14px;'>
+                                            Massachusetts MA 0269
+                                        </p>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <br>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                    <i class="fa fa-clock-o"
+                                       aria-hidden="true"
+                                       style="font-size: 40px; color: #29ABE2;"></i>
+                                </div>
+
+                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                                    <div class="row">
+                                        <p id='deposit' style='font-size: 14px;'>
+                                            Deposit: $ 5000
+                                        </p>
+                                        <p id='date' style='font-size: 14px;'>
+                                            Auction Date: 13 Oct 2017
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <br>
+
+                            <div class="row">
+
+                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 col-sm-offset-1"
+                                     style="background-color: #29ABE2; border-radius: 10px">
+                                    <h4 class='text-center' 
+                                        style='color: #fff; font-weight: 700; padding: 6px; '>
+                                        On Time
+                                    </h4>
+                                </div>
+                                
+
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                
+		</div>
+
+
+        
+
+	</section>
+
+</div>
+<!-- /main -->
+
+
+<!-- ======================================================== -->
+<!-- Footer-->
+<!-- ======================================================== -->
+<footer class="site_footer">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="listing_footer">
+				<div class="col-sm-12">
+					<div class="footer_logo text-center">
+						<h2>
+							James <span>Gattuso</span> <span>Realty</span>
+						</h2>
+						<p class="copyright">© 2017 All Rights Reserved</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /row -->
+
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="powered_by text-center">
+					<p>Powered by <a href="http://www.senzalabs.com/" target="_blank">Senza Labs</a></p>
+				</div>
+			</div>
+		</div>
+		<!-- /row -->
+
+	</div>
+	<!-- /container-fluid -->
+</footer>
+{% endblock %}
+
+
+
+{% block javascript %}
+<script type="text/javascript">
+    getAPIData()
+
+
+    function getAPIData(){
+        
+        $.ajax({
+            method: 'GET',
+            url: '/ajax/get_all_today/',
+            success: function(result){
+                body_data = ``;
+                var i = 0;
+                result.map(function(val){
+                    address = val.address;
+                    city = val.country + ' ' + val.state + ' ' + val.zipcode;
+                    deposit = 'Deposit: ' + val.deposit;
+                    date = 'Auction Date: ' + val.date; 
+                    status = val.status;
+
+                    // console.log(address, city, deposit, date, status)
+
+                    if(i == 0) { 
+                        body_data += '\
+                        <div class="container"> \
+                            <div class="row"> \
+                                <br> \
+                            <div class="row clearfix"> \
+                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12"\
+                                     style="background-color: #eee; padding: 15px; \
+                                            border-radius: 10px; border-width: 5px;\
+                                            border-color: #999; margin-left: 25px" >\
+                                    <div class="card">\
+                                        <div class="header text-center">\
+                                            <h5 style="font-weight: 900; color: #29ABE2;">\
+                                                JAMES GATTUSO REALITY\
+                                            </h5>\
+                                            <br>\
+                                        </div>\
+                                        <div class="body">\
+                                            <div class="row">\
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">\
+                                                    <i class="fa fa-compass"\
+                                                       aria-hidden="true"\
+                                                       style="font-size: 40px; color: #29ABE2;"></i>\
+                                                </div>\
+                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">\
+                                                    <div class="row">\
+                                                        <p class="dashboard_text" id="address" style="font-size: 14px;">\
+                                                            '+address+'\
+                                                        </p>\
+                                                        <p class="dashboard_text" id="city" style="font-size: 14px;">\
+                                                            '+city+'\
+                                                        </p>\
+                                                    </div>\
+                                                </div>\
+                                            </div>\
+                                            <br>\
+                                            <div class="row">\
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">\
+                                                    <i class="fa fa-clock-o"\
+                                                       aria-hidden="true"\
+                                                       style="font-size: 40px; color: #29ABE2;"></i>\
+                                                </div>\
+                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">\
+                                                    <div class="row">\
+                                                        <p id="deposit" style="font-size: 14px;">\
+                                                            '+deposit+'\
+                                                        </p>\
+                                                        <p id="date" style="font-size: 14px;">\
+                                                            '+date+'\
+                                                        </p>\
+                                                    </div>\
+                                                </div>\
+                                            </div>\
+                                            <br>\
+                                            <div class="row">\
+                                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 col-sm-offset-1"\
+                                                     style="background-color: #29ABE2; border-radius: 10px">\
+                                                    <h4 class="text-center" \
+                                                        style="color: #fff; font-weight: 700; padding: 6px; font-size: 14px">\
+                                                        '+date+'\
+                                                    </h4>\
+                                                </div>\
+                                            </div>\
+                                        </div>\
+                                    </div>\
+                                </div>'
+                            i+=1;
+                    } else if (i == 1) { 
+                        body_data += '\
+                            <div class="row clearfix"> \
+                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 col-lg-offset-1"\
+                                     style="background-color: #eee; padding: 15px; \
+                                            border-radius: 10px; border-width: 5px;\
+                                            border-color: #999;">\
+                                    <div class="card">\
+                                        <div class="header text-center">\
+                                            <h5 style="font-weight: 900; color: #29ABE2;">\
+                                                JAMES GATTUSO REALITY\
+                                            </h5>\
+                                            <br>\
+                                        </div>\
+                                        <div class="body">\
+                                            <div class="row">\
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">\
+                                                    <i class="fa fa-compass"\
+                                                       aria-hidden="true"\
+                                                       style="font-size: 40px; color: #29ABE2;"></i>\
+                                                </div>\
+                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">\
+                                                    <div class="row">\
+                                                        <p class="dashboard_text" id="address" style="font-size: 14px;">\
+                                                            '+address+'\
+                                                        </p>\
+                                                        <p class="dashboard_text" id="city" style="font-size: 14px;">\
+                                                            '+city+'\
+                                                        </p>\
+                                                    </div>\
+                                                </div>\
+                                            </div>\
+                                            <br>\
+                                            <div class="row">\
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">\
+                                                    <i class="fa fa-clock-o"\
+                                                       aria-hidden="true"\
+                                                       style="font-size: 40px; color: #29ABE2;"></i>\
+                                                </div>\
+                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">\
+                                                    <div class="row">\
+                                                        <p id="deposit" style="font-size: 14px;">\
+                                                            '+deposit+'\
+                                                        </p>\
+                                                        <p id="date" style="font-size: 14px;">\
+                                                            '+date+'\
+                                                        </p>\
+                                                    </div>\
+                                                </div>\
+                                            </div>\
+                                            <br>\
+                                            <div class="row">\
+                                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 col-sm-offset-1"\
+                                                     style="background-color: #29ABE2; border-radius: 10px">\
+                                                    <h4 class="text-center" \
+                                                        style="color: #fff; font-weight: 700; padding: 6px; font-size: 14px">\
+                                                        '+date+'\
+                                                    </h4>\
+                                                </div>\
+                                            </div>\
+                                        </div>\
+                                    </div>\
+                                </div>'
+                            i += 1;
+                    } else if(i == 2) { 
+                        body_data += '\
+                            <div class="row clearfix"> \
+                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 col-lg-offset-1"\
+                                     style="background-color: #eee; padding: 15px; \
+                                            border-radius: 10px; border-width: 5px;\
+                                            border-color: #999;">\
+                                    <div class="card">\
+                                        <div class="header text-center">\
+                                            <h5 style="font-weight: 900; color: #29ABE2;">\
+                                                JAMES GATTUSO REALITY\
+                                            </h5>\
+                                            <br>\
+                                        </div>\
+                                        <div class="body">\
+                                            <div class="row">\
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">\
+                                                    <i class="fa fa-compass"\
+                                                       aria-hidden="true"\
+                                                       style="font-size: 40px; color: #29ABE2;"></i>\
+                                                </div>\
+                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">\
+                                                    <div class="row">\
+                                                        <p class="dashboard_text" id="address" style="font-size: 14px;">\
+                                                            '+address+'\
+                                                        </p>\
+                                                        <p class="dashboard_text" id="city" style="font-size: 14px;">\
+                                                            '+city+'\
+                                                        </p>\
+                                                    </div>\
+                                                </div>\
+                                            </div>\
+                                            <br>\
+                                            <div class="row">\
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">\
+                                                    <i class="fa fa-clock-o"\
+                                                       aria-hidden="true"\
+                                                       style="font-size: 40px; color: #29ABE2;"></i>\
+                                                </div>\
+                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">\
+                                                    <div class="row">\
+                                                        <p id="deposit" style="font-size: 14px;">\
+                                                            '+deposit+'\
+                                                        </p>\
+                                                        <p id="date" style="font-size: 14px;">\
+                                                            '+date+'\
+                                                        </p>\
+                                                    </div>\
+                                                </div>\
+                                            </div>\
+                                            <br>\
+                                            <div class="row">\
+                                                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 col-sm-offset-1"\
+                                                     style="background-color: #29ABE2; border-radius: 10px">\
+                                                    <h4 class="text-center" \
+                                                        style="color: #fff; font-weight: 700; padding: 6px; font-size: 14px">\
+                                                        '+date+'\
+                                                    </h4>\
+                                                </div>\
+                                            </div>\
+                                        </div>\
+                                    </div>\
+                                </div>\
+                            </div>'
+                        i = 0;
+                    }
+                    
+                });
+
+                document.getElementById('dashboard_body').innerHTML = body_data;
+            }
+        });
+    }
+</script>
+{% endblock %}
