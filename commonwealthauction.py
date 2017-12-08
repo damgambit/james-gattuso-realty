@@ -69,14 +69,14 @@ def parser(location):
 
         #print "%r\n%r\n%r\n%r\n%r\n%r\n" % (status, Auction_Date, Auction_time, Address, County, Deposit)
 
-        writer.writerow([status, Auction_Date, Auction_time, Address, County, Deposit])
+        #writer.writerow([status, Auction_Date, Auction_time, Address, County, Deposit])
         # status,Auction_Date,Auction_time,Address,County,Deposit
 
         row = [status, Auction_Date, Auction_time, Address, County, Deposit]
 
         if row[0] == None:
             row[0] = 'Active'
-        c = CommonWealthAuction.objects.get_or_create(date=datetime.datetime.strptime(row[1], '%m/%d/%Y'),
+        c = CommonWealthAuction.objects.get_or_create(date=datetime.datetime.strptime(str(row[1]), "b'%m/%d/%Y'"),
                                                       time=row[2],
                                                       status=row[0],
                                                       address=row[3],
@@ -86,7 +86,7 @@ def parser(location):
 
 
 
-with open('./csv_file/commonwealthauction.csv','wb')as export:
+with open('./csv_file/commonwealthauction.csv','w')as export:
 
     writer = csv.writer(export)
 

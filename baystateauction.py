@@ -82,7 +82,7 @@ def parser(link):
 
             Deposit = None
 
-        writer.writerow([Status,Day,Date,Time,", ".join(Address),City,State,Deposit])
+        #writer.writerow([Status,Day,Date,Time,", ".join(Address),City,State,Deposit])
 
         row = [Status,Day,Date,Time,", ".join(Address),City,State,Deposit]
         print(row)
@@ -103,7 +103,7 @@ def parser(link):
 
 
 
-with open("./csv_file/baystateauction.csv","wb")as export:
+with open("./csv_file/baystateauction.csv","w")as export:
 
     writer = csv.writer(export)
 

@@ -54,7 +54,6 @@ d1 = datetime.datetime.strptime('01/01/2001', '%m/%d/%Y')
 
 Timeline = namedtuple('Timeline', ('baystateauction', 'townauction'))
 
-from models import *
 import csv
 
 
@@ -457,22 +456,27 @@ def get_all(request, type = 'json'):
     print(is_active, is_cancel, is_postponed)
 
     bsav = []
+    cwav = []
+    hrwv = []
+    lmav = []
+    pav = []
+    pev = []
+    sav = []
     tasv = []
     tav = []
-    pev = []
-    lmav = []
-    hrev = []
-    cwav = []
 
     if not filtering:
         print("[*] sending all")
 
         bsav += list(BayStateAuction.objects.filter(date__range=[date_from, date_to]).values()) 
-        tav += list(TownAuction.objects.filter(date__range=[date_from, date_to]).values()) 
         cwav += list(CommonWealthAuction.objects.filter(date__range=[date_from, date_to]).values()) 
-        pev += list(Pesco.objects.filter(date__range=[date_from, date_to]).values()) 
-        tasv += list(TacheAuctionAndSales.objects.filter(date__range=[date_from, date_to]).values()) 
+        hrwv += list(HarkinRealEstate.objects.filter(date__range=[date_from, date_to]).values()) 
         lmav += list(LandMarkAuction.objects.filter(date__range=[date_from, date_to]).values())
+        pav += list(PatriotAuctioneer.objects.filter(date__range=[date_from, date_to]).values())
+        pev += list(Pesco.objects.filter(date__range=[date_from, date_to]).values()) 
+        sav += list(SullivanAuctioneers.objects.filter(date__range=[date_from, date_to]).values()) 
+        tasv += list(TacheAuctionAndSales.objects.filter(date__range=[date_from, date_to]).values()) 
+        tav += list(TownAuction.objects.filter(date__range=[date_from, date_to]).values()) 
 
     if filtering:
         if is_active:
@@ -489,40 +493,70 @@ def get_all(request, type = 'json'):
                 date__range=[date_from, date_to]).values()) 
             cwav += list(CommonWealthAuction.objects.filter(status__icontains='3rd Party Purchase', 
                 date__range=[date_from, date_to]).values())
+            cwav += list(CommonWealthAuction.objects.filter(status__icontains='Active', 
+                date__range=[date_from, date_to]).values())
+            pav += list(PatriotAuctioneer.objects.filter(status__icontains='On_Time', 
+                date__range=[date_from, date_to]).values())
+            sav += list(SullivanAuctioneers.objects.filter(status__icontains='On_Time', 
+                date__range=[date_from, date_to]).values())
+            hrwv += list(HarkinRealEstate.objects.filter(status__icontains='On', 
+                date__range=[date_from, date_to]).values())
+            
         if is_postponed:
             print("[*] sending postponed")
             bsav += list(BayStateAuction.objects.filter(status__icontains='POSTPONED', 
                 date__range=[date_from, date_to]).values())
-            tasv += list(TacheAuctionAndSales.objects.filter(status__icontains='POSTPONED',
+            tasv += list(TacheAuctionAndSales.objects.filter(status__icontains='PP',
                 date__range=[date_from, date_to]).values())
             tav += list(TownAuction.objects.filter(status__icontains='Postponed', 
                 date__range=[date_from, date_to]).values())
+            lmav += list(LandMarkAuction.objects.filter(status__icontains='Continued', 
+                date__range=[date_from, date_to]).values()) 
+            cwav += list(CommonWealthAuction.objects.filter(status__icontains='Postponed', 
+                date__range=[date_from, date_to]).values())
+            pav += list(PatriotAuctioneer.objects.filter(status__icontains='postponed', 
+                date__range=[date_from, date_to]).values())
+            hrwv += list(HarkinRealEstate.objects.filter(status__icontains='Postponed', 
+                date__range=[date_from, date_to]).values())
         if is_cancel:
             print("[*] sending cancel")
-            bsav += list(BayStateAuction.objects.filter(status__icontains='Cancel',
+            bsav += list(BayStateAuction.objects.filter(status__icontains='Cancel', 
                 date__range=[date_from, date_to]).values())
-            tav += list(TownAuction.objects.filter(status__icontains='Cancel',
+            tav += list(TownAuction.objects.filter(status__icontains='Cancel', 
+                date__range=[date_from, date_to]).values())
+            lmav += list(LandMarkAuction.objects.filter(status__icontains='CANCEL', 
+                date__range=[date_from, date_to]).values()) 
+            cwav += list(CommonWealthAuction.objects.filter(status__icontains='Cancel', 
+                date__range=[date_from, date_to]).values())
+            sav += list(SullivanAuctioneers.objects.filter(status__icontains='ancel', 
+                date__range=[date_from, date_to]).values())
+            hrwv += list(HarkinRealEstate.objects.filter(status__icontains='Cancel', 
                 date__range=[date_from, date_to]).values())
         
     
-    data = bsav + tasv + tav + pev + lmav + cwav
+    data = bsav + cwav + hrwv + pav + pev + sav + tasv + tav
 
     df = pd.DataFrame(data)
 
     active_counter = len(df[df['status'].str.contains("Continued")]) + \
              len(df[df['status'].str.contains("ON TIME")]) + \
              len(df[df['status'].str.contains("On_Time")]) + \
+             len(df[df['status'].str.contains("Active")]) + \
+             len(df[df['status'].str.contains("On")]) + \
              len(df[df['status'].str.contains("Currently")]) + \
              len(df[df['status'].str.contains("3rd Party Purchase")]) + \
              len(df[df['status'] == ''])
     print(active_counter)
 
     postponed_counter = len(df[df['status'].str.contains("POSTPONED")]) + \
-             len(df[df['status'].str.contains("Postponed")]) 
+             len(df[df['status'].str.contains("Postponed")]) + \
+             len(df[df['status'].str.contains("PP")]) + \
+             len(df[df['status'].str.contains("postponed")]) 
              
     print(postponed_counter)
 
-    cancel_counter = len(df[df['status'].str.contains("Cancel")])
+    cancel_counter = len(df[df['status'].str.contains("Cancel")]) +\
+             len(df[df['status'].str.contains("CANCEL")])
     print(cancel_counter)
 
     data1 = {}
@@ -584,12 +618,12 @@ def get_xlsx(request):
 
     file_full_path = "output.xlsx"
 
-    with open(file_full_path,'r') as f:
+    with open(file_full_path,'r', encoding='utf-8', errors='ignore') as f:
         data = f.read()
 
     response = HttpResponse(data, content_type=mimetypes.guess_type(file_full_path)[0])
     response['Content-Disposition'] = "attachment; filename={0}".format(filename)
-    response['Content-Length'] = os.path.getsize(file_full_path)
+    #response['Content-Length'] = os.path.getsize(file_full_path)
 
     return response
 
@@ -599,7 +633,7 @@ def get_xlsx_from_file(request):
 
     file_full_path = "output.xlsx"
 
-    with open(file_full_path,'r') as f:
+    with open(file_full_path,'rb') as f:
         data = f.read()
 
     response = HttpResponse(data, content_type=mimetypes.guess_type(file_full_path)[0])

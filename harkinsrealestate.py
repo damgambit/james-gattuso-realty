@@ -134,13 +134,16 @@ def parser(link):
 
     #print "%r\n%r\n%r\n%r\n%r\n%r\n%r\n%r\n%r\n" % (link,Date,Time,Status,Deposit,Address,City,State,Zipcode)
 
-    writer.writerow([Date,Time,Status,Address,City,State,Zipcode,Deposit])
+    #writer.writerow([Date,Time,Status,Address,City,State,Zipcode,Deposit])
 
     if 'Sold' in Date:
         return
 
     if Zipcode == None:
         Zipcode = '00000'
+
+    if Deposit == None:
+        Deposit = 0
     c = HarkinRealEstate.objects.get_or_create(date=datetime.datetime.strptime(Date, '%B %d, %Y '),
                                                   time=Time,
                                                   status=Status,
@@ -153,7 +156,7 @@ def parser(link):
 
 
 
-with open('./csv_file/harkinsrealestate.csv','wb')as export:
+with open('./csv_file/harkinsrealestate.csv','w')as export:
 
     writer = csv.writer(export)
 
